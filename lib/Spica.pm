@@ -165,7 +165,7 @@ sub fetch_raw {
         method     => 'GET',
         scheme     => $self->scheme,
         host       => $self->host,
-        port       => $self->port,
+        ($self->schema eq 'https' ? () : (port => $self->port)),
         path_query => $self->uri_for($path, $param),
     );
 
@@ -175,6 +175,11 @@ sub fetch_raw {
         Carp::croak("Invalid response. code is '$code'");
     }
 
+    return $self->parse($body);
+}
+
+sub parse {
+    my ($self, $body) = @_;
     return $self->parser->parse($body);
 }
 
