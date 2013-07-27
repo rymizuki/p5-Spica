@@ -161,9 +161,9 @@ sub request {
     my %content;
     if ($method eq 'GET') {
         %content = ();
-        $builder->create_query;
+        $uri_builder->create_query;
     } elsif ($method eq 'POST') {
-        %content = %{ $builder->param };
+        %content = %{ $uri_builder->param };
     }
 
     my ($minor_version, $code, $msg, $headers, $body) = $self->fetcher->request(
@@ -171,7 +171,7 @@ sub request {
         scheme     => $self->scheme,
         host       => $self->host,
         ($self->scheme eq 'https' ? () : (port => $self->port)),
-        path_query => $builder->uri->path_query,
+        path_query => $uri_builder->uri->path_query,
         content    => \%content,
     );
 
