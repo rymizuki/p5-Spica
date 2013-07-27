@@ -1,6 +1,8 @@
 p5-Spica
 ===========================================================================
 
+This library is a development stage.
+
 # SYNOPSIS
 
  my $client = MyClient->new(
