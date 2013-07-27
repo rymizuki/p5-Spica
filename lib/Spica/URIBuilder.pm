@@ -80,8 +80,13 @@ sub create_uri {
     my $self = shift;
 
     $self->uri->path($self->path);
-    $self->uri->query_form($self->param);
+    $self;
+}
 
+sub create_query {
+    my $self = shift;
+
+    $self->uri->query_form($self->param);
     $self;
 }
 
