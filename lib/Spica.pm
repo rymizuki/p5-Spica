@@ -91,6 +91,7 @@ has fetcher => (
 
 no Mouse;
 
+# XXX: Deprecated
 sub single {
     my ($self, @args) = @_;
 
@@ -103,10 +104,10 @@ sub single {
             push @path => shift @args;
         }
     }
-    my $category_name = $path[0];
+    my $client_name = $path[0];
 
-    my $category = $self->schema->get_category($category_name)
-        or Carp::croak("No such category $category_name");
+    my $client = $self->schema->get_client($client_name)
+        or Carp::croak("No such client $client_name");
     my $suppres_object_creation = exists $option->{suppress_object_creation}
         ? delete $option->{suppress_object_creation}
         : $self->suppress_object_creation;
@@ -117,15 +118,16 @@ sub single {
     if ($suppres_object_creation) {
         return $content;
     } else {
-        return $self->schema->get_row_class($category_name)->new(
+        return $self->schema->get_row_class($client_name)->new(
             row_data       => $content,
             spica          => $self,
-            category       => $category,
-            category_name  => $category_name,
+            client         => $client,
+            client_name    => $client_name,
         );
     }
 }
 
+# XXX: Deprecated
 sub search {
     my ($self, @args) = @_;
 
@@ -139,9 +141,9 @@ sub search {
         }
     }
 
-    my $category_name = $path[0];
-    my $category = $self->schema->get_category($category_name)
-        or Carp::croak("No such category $category_name");
+    my $client_name = $path[0];
+    my $client = $self->schema->get_client($client_name)
+        or Carp::croak("No such client $client_name");
     my $suppres_object_creation = exists $option->{suppress_object_creation}
         ? delete $option->{suppress_object_creation}
         : $self->suppress_object_creation;
@@ -152,24 +154,58 @@ sub search {
     my $iterator = Spica::Iterator->new(
         data                     => $content,
         spica                    => $self,
-        row_class                => $self->schema->get_row_class($category_name),
-        category                 => $self->schema->get_category($category_name),
-        category_naem            => $category_name,
+        row_class                => $self->schema->get_row_class($client_name),
+        client                   => $self->schema->get_client($client_name),
+        client_naem              => $client_name,
         suppress_object_creation => $suppres_object_creation,
     );
 
     return wantarray ? $iterator->all : $iterator;
 }
 
+sub fetch {
+    my ($self, $client_name, $endpoint_name, $param, $option) = @_;
+
+    my $client = $self->schema->get_client($client_name)
+        or Carp::croak("No such client $client_name");
+    my $suppres_object_creation = exists $option->{suppress_object_creation}
+        ? delete $option->{suppress_object_creation}
+        : $self->suppress_object_creation;
+
+    my $uri_builder = $client->get_uri_builder($endpoint_name)->create($param);
+
+    my $content = $self->fetch_raw($uri_builder, $option);
+
+    my $iterator = Spica::Iterator->new(
+        data                     => $content,
+        spica                    => $self,
+        row_class                => $self->schema->get_row_class($client_name),
+        client                   => $self->schema->get_client($client_name),
+        client_naem              => $client_name,
+        suppress_object_creation => $suppres_object_creation,
+    );
+
+    return wantarray ? $iterator->all : $iterator;
+
+}
+
 sub fetch_raw {
     my ($self, $path, $param, $option) = @_;
+
+    # XXX: このへんはもうちょい煮詰める
+    my $path_query;
+    if (ref $path && ref $path eq 'Spica::URIBuilder') {
+        $path_query = $path->uri->path_query;
+    } else {
+        $path_query = $self->uri_for($path, $param);
+    }
 
     my ($minor_version, $code, $msg, $headers, $body) = $self->fetcher->request(
         method     => 'GET',
         scheme     => $self->scheme,
         host       => $self->host,
         ($self->schema eq 'https' ? () : (port => $self->port)),
-        path_query => $self->uri_for($path, $param),
+        path_query => $path_query,
     );
 
     if ($code != 200) {

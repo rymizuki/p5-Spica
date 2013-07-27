@@ -18,7 +18,7 @@ sub new {
     } => $class;
 
     $self->{select_columns} ||= [keys %{ $args{row_data} }];
-    $self->{category} ||= $args{spica}->schema->get_category($args{category_name});
+    $self->{client} ||= $args{spica}->schema->get_client($args{client_name});
 
     return $self;
 }
@@ -50,8 +50,8 @@ sub get {
     my $data = $cache->{$column};
 
     unless ($data) {
-        $data = $cache->{$column} = $self->{category} ?
-            $self->{category}->call_inflate($column => $self->get_column($column)) :
+        $data = $cache->{$column} = $self->{client} ?
+            $self->{client}->call_inflate($column => $self->get_column($column)) :
             $self->get_column($column);
     }
 
@@ -60,7 +60,7 @@ sub get {
 
 sub set {
     my ($self, $column, $value) = @_;
-    $self->set_column($column => $self->{category}->call_deflate($column, $value));
+    $self->set_column($column => $self->{client}->call_deflate($column, $value));
     delete $self->{_get_column_cached}{$column};
     return $self;
 }
