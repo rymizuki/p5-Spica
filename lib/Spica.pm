@@ -102,7 +102,7 @@ sub fetch {
 
     my $uri_builder = $client->get_uri_builder($endpoint_name)->create($param);
 
-    my $content = $self->fetch_raw($uri_builder, $option);
+    my $content = $self->request('GET', $uri_builder, $option);
 
     my $iterator = Spica::Iterator->new(
         data                     => $content,
@@ -114,11 +114,36 @@ sub fetch {
     );
 
     return wantarray ? $iterator->all : $iterator;
-
 }
 
-sub fetch_raw {
-    my ($self, $path, $param, $option) = @_;
+sub save {
+    my ($self, $client_name, $endpoint_name, $param, $option) = @_;
+
+    my $client = $self->schema->get_client($client_name)
+        or Carp::croak("No such client $client_name");
+    my $suppres_object_creation = exists $option->{suppress_object_creation}
+        ? delete $option->{suppress_object_creation}
+        : $self->suppress_object_creation;
+
+    my $uri_builder = $client->get_uri_builder($endpoint_name)->create($param);
+
+    my $content = $self->request('GET', $uri_builder, $option);
+
+    if ($suppres_object_creation) {
+        return $content;
+    } else {
+        return $self->schema->get_row_class($client_name)->new(
+            row_data       => $content,
+            spica          => $self,
+            client         => $client,
+            client_naem    => $client_name,
+            select_columns => $self->{select_columns},
+        );
+    }
+}
+
+sub request {
+    my ($self, $method, $path, $param, $option) = @_;
 
     # XXX: このへんはもうちょい煮詰める
     my $path_query;
@@ -129,7 +154,7 @@ sub fetch_raw {
     }
 
     my ($minor_version, $code, $msg, $headers, $body) = $self->fetcher->request(
-        method     => 'GET',
+        method     => $method,
         scheme     => $self->scheme,
         host       => $self->host,
         ($self->scheme eq 'https' ? () : (port => $self->port)),
