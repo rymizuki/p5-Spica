@@ -5,7 +5,6 @@ use utf8;
 our $VERSION = '0.01';
 
 use Spica::Iterator;
-use Spica::Parser::JSON;
 
 use Carp ();
 use Class::Load ();
@@ -64,12 +63,12 @@ has suppress_object_creation => (
 
 has schema_class => (
     is      => 'ro',
-    isa     => 'ClassName',
+    isa     => 'Str',
     default => sub { "@{[ ref $_[0] ? ref $_[0] : $_[0] ]}::Schema" },
 );
 has parser_class => (
     is      => 'ro',
-    isa     => 'ClassName',
+    isa     => 'Str',
     default => 'Spica::Parser::JSON',
 );
 
@@ -80,7 +79,7 @@ has schema => (
 );
 has parser => (
     is         => 'rw',
-    isa        => 'ClassName',
+    isa        => 'Object',
     lazy_build => 1,
 );
 has fetcher => (
@@ -221,7 +220,7 @@ sub _build_schema {
 
 sub _build_parser {
     my $self = shift;
-    my $parser_class = $self->{parser_class};
+    my $parser_class = $self->parser_class;
     Class::Load::load_class( $parser_class );
 
     return $parser_class->new;
