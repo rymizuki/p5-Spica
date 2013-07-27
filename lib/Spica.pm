@@ -27,10 +27,6 @@ has port => (
     isa => 'Str',
     default => 80,
 );
-has token => (
-    is       => 'ro',
-    isa      => 'Str',
-);
 
 has schema_class => (
     is      => 'ro',
@@ -42,11 +38,7 @@ has parser_class => (
     isa     => 'Str',
     default => 'Spica::Parser::JSON',
 );
-has cache_period => (
-    is      => 'ro',
-    isa     => 'Int',
-    default => 0,
-);
+
 has agent => (
     is => 'ro',
     isa => 'Str',
