@@ -127,7 +127,7 @@ sub save {
 
     my $uri_builder = $client->get_uri_builder($endpoint_name)->create($param);
 
-    my $content = $self->request('GET', $uri_builder, $option);
+    my $content = $self->request('POST', $uri_builder, $option);
 
     if ($suppres_object_creation) {
         return $content;
