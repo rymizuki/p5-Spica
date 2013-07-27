@@ -204,7 +204,7 @@ sub fetch_raw {
         method     => 'GET',
         scheme     => $self->scheme,
         host       => $self->host,
-        ($self->schema eq 'https' ? () : (port => $self->port)),
+        ($self->scheme eq 'https' ? () : (port => $self->port)),
         path_query => $path_query,
     );
 
