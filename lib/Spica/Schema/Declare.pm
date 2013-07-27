@@ -98,7 +98,7 @@ sub client (&) {
         my ($name, $path, $requires);
         if (@_ == 2) {
             $name = 'default';
-            ($path, $requires) = @_:
+            ($path, $requires) = @_;
         } else {
             ($name, $path, $requires) = @_;
         }
