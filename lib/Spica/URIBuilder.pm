@@ -28,8 +28,9 @@ has param => (
 );
 
 has uri => (
-    is  => 'ro',
-    isa => 'URI',
+    is         => 'ro',
+    isa        => 'URI',
+    lazy_build => 1,
 );
 
 no Mouse;
@@ -47,6 +48,15 @@ sub create {
         Carp::croak(sprintf("Invalid paramters. %s is required.", join(',' => @invalid_params)));
     }
 
+    $self->create_path($param);
+    $self->create_uri;
+
+    return $self;
+}
+
+sub create_path {
+    my ($self, $param) = @_;
+
     my $path_base = $self->path_base;
 
     if ($path_base =~ /\{(?:[0-9a-zA-Z_]+)\}/) {
@@ -63,9 +73,21 @@ sub create {
     $self->{path}  = $path_base;
     $self->{param} = $param;
 
-    $self->{uri}   = URI->new($self->path);
-
     return $self;
+}
+
+sub create_uri {
+    my $self = shift;
+
+    $self->uri->path($self->path);
+    $self->uri->query_form($self->param);
+
+    $self;
+}
+
+sub _build_uri {
+    my $lsef = shift;
+    return URI->new;
 }
 
 1;
