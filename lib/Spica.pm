@@ -145,12 +145,25 @@ sub save {
 sub request {
     my ($self, $method, $path, $param, $option) = @_;
 
-    # XXX: このへんはもうちょい煮詰める
-    my $path_query;
+    # XXX: umm...
+    my $uri_builder;
     if (ref $path && ref $path eq 'Spica::URIBuilder') {
-        $path_query = $path->uri->path_query;
+        $uri_builder = $path;
+        # XXX $self->request('GET', $builder, \%options);
+        $option = $param;
     } else {
-        $path_query = $self->uri_for($path, $param);
+        $uri_builder = Spica::URIBuilder->new(
+            path  => $path,
+            param => $param,
+        );
+    }
+
+    my %content;
+    if ($method eq 'GET') {
+        %content = ();
+        $builder->create_query;
+    } elsif ($method eq 'POST') {
+        %content = %{ $builder->param };
     }
 
     my ($minor_version, $code, $msg, $headers, $body) = $self->fetcher->request(
@@ -158,12 +171,12 @@ sub request {
         scheme     => $self->scheme,
         host       => $self->host,
         ($self->scheme eq 'https' ? () : (port => $self->port)),
-        path_query => $path_query,
+        path_query => $builder->uri->path_query,
+        content    => \%content,
     );
 
     if ($code != 200) {
         # throw Exception
-        warn $body;
         Carp::croak("Invalid response. code is '$code'");
     }
 
