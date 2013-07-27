@@ -93,6 +93,12 @@ no Mouse;
 sub fetch {
     my ($self, $client_name, $endpoint_name, $param, $option) = @_;
 
+    if (ref $endpoint_name && ref $endpoint_name eq 'HASH') {
+        $option = $param;
+        $param  = $endpoint_name;
+        $endpoint_name = 'default';
+    }
+
     my $client = $self->schema->get_client($client_name)
         or Carp::croak("No such client $client_name");
     my $suppres_object_creation = exists $option->{suppress_object_creation}
@@ -117,6 +123,12 @@ sub fetch {
 
 sub save {
     my ($self, $client_name, $endpoint_name, $param, $option) = @_;
+
+    if (ref $endpoint_name && ref $endpoint_name eq 'HASH') {
+        $option = $param;
+        $param  = $endpoint_name;
+        $endpoint_name = 'default';
+    }
 
     my $client = $self->schema->get_client($client_name)
         or Carp::croak("No such client $client_name");

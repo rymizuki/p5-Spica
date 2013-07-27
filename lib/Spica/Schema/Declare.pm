@@ -95,11 +95,16 @@ sub client (&) {
     local *{"${dest_class}::columns"}   = sub (@)    { @client_columns = @_ };
     local *{"${dest_class}::row_class"} = sub (@)    { $row_class = shift };
     local *{"${dest_class}::endpoint"}  = sub ($$@) {
-        my ($name, $path, @args) = @_;
+        my ($name, $path, $requires);
+        if (@_ == 2) {
+            $name = 'default';
+            ($path, $requires) = @_:
+        } else {
+            ($name, $path, $requires) = @_;
+        }
         $endpoint{$name} = +{
             path     => $path,
-            # XXX: not specifiction.
-            requires => ref($args[0]) && ref($args[0]) eq 'ARRAY' ? $args[0] : \@args,
+            requires => $requires,
         };
     };
     local *{"${dest_class}::inflate"}   = sub ($&)   {
