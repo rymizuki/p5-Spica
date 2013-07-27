@@ -1,18 +1,48 @@
-package Spica::Schema::Category;
+package Spica::Schema::Client;
 use strict;
 use warnings;
 
 use Class::Load ();
+use Spica::URIBuilder;
 
 use Mouse;
 
-has name => (is => 'rw', isa => 'Str');
-has columns => (is => 'rw', isa => 'ArrayRef');
-has escaped_columns => (is => 'rw', isa => 'ArrayRef', default => sub { [] });
-has deflators => (is => 'ro', isa => 'ArrayRef', default => sub { [] });
-has inflators => (is => 'ro', isa => 'ArrayRef', default => sub { [] });
-has row_class => (is => 'rw', isa => 'Str');
-has base_row_class => (is => 'rw', isa => 'Str', default => 'Spica::Row');
+has name => (
+    is  => 'rw',
+    isa => 'Str'
+);
+has columns => (
+    is  => 'rw',
+    isa => 'ArrayRef'
+);
+has escaped_columns => (
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [] },
+);
+has endpoint  => (
+    is      => 'rw',
+    isa     => 'HashRef',
+);
+has deflators => (
+    is      => 'ro',
+    isa     => 'ArrayRef',
+    default => sub { [] }
+);
+has inflators => (
+    is      => 'ro',
+    isa     => 'ArrayRef',
+    default => sub { [] }
+);
+has row_class => (
+    is  => 'rw',
+    isa => 'Str',
+);
+has base_row_class => (
+    is      => 'rw',
+    isa     => 'Str',
+    default => 'Spica::Row',
+);
 
 sub BUILD {
     my $self = shift;
@@ -87,6 +117,15 @@ sub call_inflate {
         }
     }
     return $col_value;
+}
+
+sub get_uri_builder {
+    my ($self, $endpoint_name) = @_;
+
+    return Spica::URIBuilder->new(
+        path_base => $self->endpoint->{$endpoint_name}{path},     
+        requires  => $self->endpoint->{$endpoint_name}{requires}, 
+    );
 }
 
 1;

@@ -5,26 +5,39 @@ use 5.10.0;
 
 use Mouse;
 
-has spica => (is => 'ro');
-has row_class => (is => 'ro');
-has category => (is => 'ro');
-has category_name => (is => 'ro');
+has spica => (
+    is  => 'ro',
+    isa => 'Spica',
+);
+has row_class => (
+    is  => 'ro',
+    isa => 'ClassName',
+);
+has client => (
+    is  => 'ro',
+    isa => 'Spica::Schema::Client',
+);
+has client_name => (
+    is  => 'ro',
+    isa => 'Str',
+);
 has suppress_object_creation => (
-    is => 'rw',
-    isa => 'Bool',
+    is      => 'rw',
+    isa     => 'Bool',
     default => 0,
 );
 has data => (
-    is => 'ro',
-    isa => 'ArrayRef',
+    is       => 'ro',
+    isa      => 'ArrayRef',
     required => 1,
 );
-has pager => (
-    is => 'ro',
-    isa => 'HashRef|Undef'
-);
 
-has position => (is => 'ro', isa => 'Int', required => 0, default => 0);
+has position => (
+    is       => 'ro',
+    isa      => 'Int',
+    required => 0,
+    default  => 0,
+);
 
 around BUILDARGS => sub {
     my $origin = shift;
@@ -58,8 +71,8 @@ sub next {
         return $self->{row_class}->new(
             row_data       => $row,
             spica          => $self->spica,
-            category       => $self->category,
-            category_name  => $self->category_name,
+            client         => $self->client,
+            client_name    => $self->client_name,
             select_columns => $self->{select_columns},
         );
     }
@@ -76,11 +89,11 @@ sub all {
         if (!$self->{suppress_object_creation}) {
             $results = [
                 map {
-                    $self->{row_class}->new(
+                    $self->row_class->new(
                         row_data       => $_,
                         spica          => $self->spica,
-                        category       => $self->category,
-                        category_name  => $self->category_name,
+                        client         => $self->client,
+                        client_name    => $self->client_name,
                         select_columns => $self->{select_columns},
                     )
                 } @$results

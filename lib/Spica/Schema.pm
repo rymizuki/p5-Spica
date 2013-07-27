@@ -5,7 +5,8 @@ use Spica::Row;
 
 use Mouse;
 
-has category => (
+# XXX: $self->clientで呼び出すとSchema::Declare::client呼び出してしまう
+has client => (
     is      => 'rw',
     isa     => 'HashRef',
     default => sub { +{} },
@@ -33,22 +34,22 @@ sub instance {
     return ${"${class}::DEFAULT_INSTANCE"};
 }
 
-sub add_category {
-    my ($self, $category) = @_;
-    return $self->{category}{$category->name} = $category;
+sub add_client {
+    my ($self, $client) = @_;
+    return $self->{client}{$client->name} = $client;
 }
 
-sub get_category {
+sub get_client {
     my ($self, $name) = @_;
     return unless $name;
-    return $self->{category}{$name};
+    return $self->{client}{$name};
 }
 
 sub get_row_class {
-    my ($self, $category_name) = @_;
+    my ($self, $client_name) = @_;
 
-    my $category = $self->{category}{$category_name};
-    return $category->{row_class} if $category;
+    my $client = $self->{client}{$client_name};
+    return $client->{row_class} if $client;
     return 'Spica::Row';
 }
 

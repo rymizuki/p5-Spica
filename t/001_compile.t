@@ -9,8 +9,9 @@ BEGIN {
         Spica::Parser::JSON
         Spica::Row
         Spica::Schema
-        Spica::Schema::Category
+        Spica::Schema::Client
         Spica::Schema::Declare
+        Spica::URIBuilder
     );
 }
 

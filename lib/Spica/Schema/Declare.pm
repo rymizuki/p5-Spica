@@ -3,12 +3,13 @@ use strict;
 use warnings;
 use Exporter::Lite;
 use Spica::Schema;
-use Spica::Schema::Category;
+use Spica::Schema::Client;
 
 our @EXPORT = qw(
     schema
     name
-    category
+    endpoint
+    client
     columns
     row_class
     base_row_class
@@ -31,9 +32,9 @@ sub base_row_class ($) {
 }
 
 sub row_namespace ($) {
-    my $category_name = shift;
+    my $client_name = shift;
     (my $caller = caller(1)) =~ s/::Schema$//;
-    join '::' => $caller, 'Row', Spica::Schema::camelize($category_name);
+    join '::' => $caller, 'Row', Spica::Schema::camelize($client_name);
 }
 
 sub _current_schema {
@@ -67,15 +68,17 @@ sub _current_schema {
 
 sub columns (@);
 sub name ($);
+sub endpoint ($$@);
 sub row_class ($);
 sub inflate_rule ($@);
-sub category (&) {
+sub client (&) {
     my $code = shift;
     my $current = _current_schema();
 
     my (
-        $category_name,
-        @category_columns,
+        $client_name,
+        @client_columns,
+        %endpoint,
         @inflate,
         @deflate,
         $row_class,
@@ -86,17 +89,25 @@ sub category (&) {
     no strict 'refs'; ## no critic;
     no warnings 'once';
     local *{"${dest_class}::name"} = sub ($) {
-        $category_name = shift;
-        $row_class = row_namespace($category_name);
+        $client_name = shift;
+        $row_class = row_namespace($client_name);
     };
-    local *{"${dest_class}::columns"}   = sub (@) { @category_columns = @_ };
-    local *{"${dest_class}::row_class"} = sub (@) { $row_class = shift };
-    local *{"${dest_class}::inflate"}   = sub ($&) {
+    local *{"${dest_class}::columns"}   = sub (@)    { @client_columns = @_ };
+    local *{"${dest_class}::row_class"} = sub (@)    { $row_class = shift };
+    local *{"${dest_class}::endpoint"}  = sub ($$@) {
+        my ($name, $path, @args) = @_;
+        $endpoint{$name} = +{
+            path     => $path,
+            # XXX: not specifiction.
+            requires => ref($args[0]) && ref($args[0]) eq 'ARRAY' ? $args[0] : \@args,
+        };
+    };
+    local *{"${dest_class}::inflate"}   = sub ($&)   {
         my ($rule, $code) = @_;
         $rule = qr/^\Q$rule\E$/ if ref $rule ne 'Regexp';
         push @inflate => ($rule, $code);
     };
-    local *{"${dest_class}::deflate"}   = sub ($&) {
+    local *{"${dest_class}::deflate"}   = sub ($&)   {
         my ($rule, $code) = @_;
         $rule = qr/^\Q$rule\E$/ if ref $rule ne 'Regexp';
         push @deflate => ($rule, $code);
@@ -105,18 +116,19 @@ sub category (&) {
     $code->();
 
     my @col_names;
-    while (@category_columns) {
-        my $col_name = shift @category_columns;
+    while (@client_columns) {
+        my $col_name = shift @client_columns;
         if (ref $col_name) {
             $col_name = $col_name->{name};
         }
         push @col_names => $col_name;
     }
 
-    $current->add_category(
-        Spica::Schema::Category->new(
-            columns => \@col_names,
-            name    => $category_name,
+    $current->add_client( # TODO: あとでclientに変更
+        Spica::Schema::Client->new(
+            columns   => \@col_names,
+            name      => $client_name,
+            endpoint  => \%endpoint,
             inflators => \@inflate,
             deflators => \@deflate,
             row_class => $row_class,
