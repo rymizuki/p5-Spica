@@ -224,7 +224,7 @@ sub _build_parser {
     my $parser_class = $self->{parser_class};
     Class::Load::load_class( $parser_class );
 
-    return $parser_class;
+    return $parser_class->new;
 }
 
 use Furl::HTTP;
