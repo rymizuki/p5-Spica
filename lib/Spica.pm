@@ -5,6 +5,7 @@ use utf8;
 our $VERSION = '0.01';
 
 use Spica::Iterator;
+use Spica::Parser::JSON;
 
 use Carp ();
 use Class::Load ();
@@ -12,68 +13,78 @@ use URI;
 
 use Mouse;
 
+#
+# API's common properties.
+# -------------------------------------------------------------------------
 has host  => (
     is       => 'ro',
     isa      => 'Str',
     required => 1,
 );
 has scheme => (
-    is => 'ro',
-    isa => 'Str',
+    is      => 'ro',
+    isa     => 'Str',
     default => 'http',
 );
 has port => (
-    is => 'ro',
-    isa => 'Str',
+    is      => 'ro',
+    isa     => 'Int',
     default => 80,
-);
-
-has schema_class => (
-    is      => 'ro',
-    isa     => 'Str',
-    default => sub { "@{[ ref $_[0] ? ref $_[0] : $_[0] ]}::Schema" },
-);
-has parser_class => (
-    is      => 'ro',
-    isa     => 'Str',
-    default => 'Spica::Parser::JSON',
-);
-
-has agent => (
-    is => 'ro',
-    isa => 'Str',
-    lazy => 1,
-    default => sub { "Spica $VERSION" },
 );
 has base_path => (
     is      => 'ro',
     isa     => 'Str',
     default => '',
 );
+has default_param => (
+    is         => 'ro',
+    isa        => 'HashRef',
+    default    => sub { +{} },
+    auto_deref => 1,
+);
+
+#
+# Agent's properties
+# -------------------------------------------------------------------------
+has agent => (
+    is      => 'ro',
+    isa     => 'Str',
+    lazy    => 1,
+    default => "Spica $VERSION",
+);
+
+#
+# Spica's properties
+# -------------------------------------------------------------------------
 has suppress_object_creation => (
     is      => 'ro',
     isa     => 'Bool',
     default => 0,
 );
 
-has default_param => (
-    is         => 'ro',
-    isa        => 'HashRef',
-    auto_deref => 1,
-    lazy_build => 1,
+has schema_class => (
+    is      => 'ro',
+    isa     => 'ClassName',
+    default => sub { "@{[ ref $_[0] ? ref $_[0] : $_[0] ]}::Schema" },
+);
+has parser_class => (
+    is      => 'ro',
+    isa     => 'ClassName',
+    default => 'Spica::Parser::JSON',
 );
 
 has schema => (
-    is         => 'ro',
+    is         => 'rw',
     isa        => 'Spica::Schema',
     lazy_build => 1,
 );
 has parser => (
-    is         => 'ro',
+    is         => 'rw',
+    isa        => 'ClassName',
     lazy_build => 1,
 );
-has client => (
-    is         => 'ro',
+has fetcher => (
+    is         => 'rw',
     isa        => 'Furl::HTTP',
     lazy_build => 1,
 );
@@ -153,7 +164,7 @@ sub search {
 sub fetch_raw {
     my ($self, $path, $param, $option) = @_;
 
-    my ($minor_version, $code, $msg, $headers, $body) = $self->client->request(
+    my ($minor_version, $code, $msg, $headers, $body) = $self->fetcher->request(
         method     => 'GET',
         scheme     => $self->scheme,
         host       => $self->host,
@@ -215,19 +226,11 @@ sub _build_parser {
 }
 
 use Furl::HTTP;
-sub _build_client {
+sub _build_fetcher {
     my $self = shift;
     return Furl::HTTP->new(
         agent => $self->agent,
     );
-}
-
-sub _build_default_param {
-    my $self = shift;
-
-    return +{
-        token => $self->token,
-    };
 }
 
 1;
