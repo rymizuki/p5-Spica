@@ -5,16 +5,33 @@ This library is a development stage.
 
 # SYNOPSIS
 
+```
+package MyClient::Schema;
+use Spica::Schema::Declare;
+
+client {
+    name 'profile';
+    endpoint '/profile', [qw(id)];
+    columns (
+        'id',
+        'name',
+        'message',
+        'created_at',
+    );
+}
+
+1;
+
  my $client = MyClient->new(
-     host       => 'example.com',
-     secret_key => 'any secret key',
+     host         => 'example.com',
+     schema_class => 'MyClient::Schema',
  );
 
- my $iterator = $client->search('timeline', +{user_id => $user_id});
+ my $profile = $client->fetch('profile', +{id => $user_id});
+
+ say $profile->name;
  
- while (my $row = $iterator->next) {
-     say $row->name;
- }
+ ```
 
 # DESCRIPTION
 
