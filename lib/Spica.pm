@@ -84,7 +84,7 @@ has parser => (
 );
 has fetcher => (
     is         => 'rw',
-    isa        => 'Furl::HTTP',
+    isa        => 'Furl',
     lazy_build => 1,
 );
 
@@ -177,7 +177,7 @@ sub request {
         %content = %{ $uri_builder->param };
     }
 
-    my ($minor_version, $code, $msg, $headers, $body) = $self->fetcher->request(
+    my $response = $self->fetcher->request(
         method     => $method,
         scheme     => $self->scheme,
         host       => $self->host,
@@ -186,12 +186,12 @@ sub request {
         content    => \%content,
     );
 
-    if ($code != 200) {
+    if (!$response->is_success) {
         # throw Exception
-        Carp::croak("Invalid response. code is '$code'");
+        Carp::croak("Invalid response. code is '@{[$response->status]}'");
     }
 
-    return $self->parse($body);
+    return $self->parse($response->content);
 }
 
 sub parse {
@@ -238,10 +238,10 @@ sub _build_parser {
     return $parser_class->new;
 }
 
-use Furl::HTTP;
+use Furl;
 sub _build_fetcher {
     my $self = shift;
-    return Furl::HTTP->new(
+    return Furl->new(
         agent => $self->agent,
     );
 }
