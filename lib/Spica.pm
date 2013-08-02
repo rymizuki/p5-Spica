@@ -68,6 +68,7 @@ has spec => (
     is         => 'rw',
     isa        => SpecClass,
     coerce     => 1,
+    default    => sub { "@{[ref $_[0] ? ref $_[0] : $_[0]]}::Spec" },
 );
 
 has parser => (
@@ -95,15 +96,22 @@ sub fetch {
 
     my $client = $self->spec->get_client($client_name)
         or Carp::croak("No such client $client_name");
+
     my $suppres_object_creation = exists $option->{suppress_object_creation}
         ? delete $option->{suppress_object_creation}
         : $self->suppress_object_creation;
 
-    my $uri_builder = $client->get_uri_builder($endpoint_name)->create($param);
+    my $uri_builder = Spica::URIBuilder->new(
+        scheme    => $self->scheme,
+        host      => $self->host,
+        port      => $self->port,
+        path_base => $client->endpoint->{$endpoint_name}{path},
+        requires  => $client->endpoint->{$endpoint_name}{requires},
+    )->create($param);
 
     my $content = $self->request('GET', $uri_builder, $option);
 
-    my $iterator = Spica::Iterator->new(
+    my $iterator = $client->receiver->new(
         data                     => $content,
         spica                    => $self,
         row_class                => $self->spec->get_row_class($client_name),
@@ -148,36 +156,37 @@ sub save {
 }
 
 sub request {
-    my ($self, $method, $path, $param, $option) = @_;
+    my $self = shift;
+    my $method = shift;
 
-    # XXX: umm...
-    my $uri_builder;
-    if (ref $path && ref $path eq 'Spica::URIBuilder') {
-        $uri_builder = $path;
-        # XXX $self->request('GET', $builder, \%options);
-        $option = $param;
-    } else {
-        $uri_builder = Spica::URIBuilder->new(
-            path  => $path,
-            param => $param,
-        );
-    }
+    my ($builder, $option) = sub {
+        my $builder;
+        if (ref $_[0] && $_[0]->isa('Spica::URIBuilder')) {
+            $builder = shift @_;
+        } else {
+            $builder = Spica::URIBuilder->new(
+                scheme => $self->scheme,
+                host   => $self->host,
+                port   => $self->port,
+                path   => shift(@_),
+                param  => shift(@_) || +{},
+            );
+        }
 
-    my %content;
-    if ($method eq 'GET') {
-        %content = ();
-        $uri_builder->create_query;
-    } elsif ($method eq 'POST') {
-        %content = %{ $uri_builder->param };
+        return ($builder, shift(@_) || +{});
+    }->(@_);
+
+    if ($method eq 'GET' && keys %{ $builder->param }) {
+        # CONTENT is not available, I will grant PATH_QUERY.
+        # make PATH_QUERY and delete params.
+        $builder->create_query;
     }
 
     my $response = $self->fetcher->request(
-        method     => $method,
-        scheme     => $self->scheme,
-        host       => $self->host,
-        ($self->scheme eq 'https' ? () : (port => $self->port)),
-        path_query => $uri_builder->uri->path_query,
-        content    => \%content,
+        method  => $method,
+        url     => $builder->uri->as_string,
+        content => $builder->param,
+        headers => [], # TODO custom any headers.
     );
 
     if (!$response->is_success) {
@@ -191,23 +200,6 @@ sub request {
 sub parse {
     my ($self, $body) = @_;
     return $self->parser->parse($body);
-}
-
-sub make_path {
-    my $self = shift;
-    return join '/' => $self->base_path, @_;
-}
-
-sub uri_for {
-    my ($self, $path, $param) = @_;
-
-    $param ||= +{};
-    $param = +{ $self->default_param => %$param };
-
-    my $uri = URI->new($path);
-    $uri->query_form(+{ $uri->query_form => %$param });
-
-    return $uri;
 }
 
 use Furl;

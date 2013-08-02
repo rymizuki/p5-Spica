@@ -18,7 +18,16 @@ sub new {
     } => $class;
 
     $self->{select_columns} ||= [keys %{ $args{row_data} }];
-    $self->{client} ||= $args{spica}->schema->get_client($args{client_name});
+    $self->{client} ||= $args{spica}->spec->get_client($args{client_name});
+
+    if (@{ $self->{client}->column_settings }) {
+        $self->{row_data_origin} = $self->{row_data};
+        for my $column (@{ $self->{client}->column_settings }) {
+            my $name = $column->{name};
+            my $from = $column->{from};
+            $self->{row_data}{$name} = $self->{row_data_origin}{$from};
+        }
+    }
 
     return $self;
 }

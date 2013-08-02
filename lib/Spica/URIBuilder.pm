@@ -5,6 +5,21 @@ use utf8;
 
 use Mouse;
 
+has scheme => (
+    is  => 'ro',
+    isa => 'Str',
+);
+
+has host => (
+    is  => 'ro',
+    isa => 'Str',
+);
+
+has port => (
+    is  => 'ro',
+    isa => 'Int',
+);
+
 has path_base => (
     is  => 'rw',
     isa => 'Str',
@@ -49,7 +64,9 @@ sub create {
     }
 
     $self->create_path($param);
-    $self->create_uri;
+    $self->uri->path($self->path);
+    $self->uri->port($self->port)
+        if $self->port && $self->scheme ne 'https';
 
     return $self;
 }
@@ -76,12 +93,6 @@ sub create_path {
     return $self;
 }
 
-sub create_uri {
-    my $self = shift;
-
-    $self->uri->path($self->path);
-    $self;
-}
 
 sub create_query {
     my $self = shift;
@@ -91,8 +102,12 @@ sub create_query {
 }
 
 sub _build_uri {
-    my $lsef = shift;
-    return URI->new;
+    my $self = shift;
+    if ($self->scheme && $self->host) {
+        return URI->new(sprintf '%s://%s', $self->scheme, $self->host);
+    } else {
+        return URI->new;
+    }
 }
 
 1;

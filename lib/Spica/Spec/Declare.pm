@@ -135,10 +135,11 @@ sub client (&) {
 
     $code->();
 
-    my @col_names;
+    my (@col_names, @col_settings);
     while (@client_columns) {
         my $col_name = shift @client_columns;
         if (ref $col_name) {
+            push @col_settings => $col_name;
             $col_name = $col_name->{name};
         }
         push @col_names => $col_name;
@@ -146,14 +147,15 @@ sub client (&) {
 
     $current->add_client(
         Spica::Spec::Client->new(
-            columns   => \@col_names,
-            name      => $client_name,
-            endpoint  => \%endpoint,
-            inflators => \@inflate,
-            deflators => \@deflate,
-            trigger   => \%trigger,
-            receiver  => $receiver,
-            row_class => $row_class,
+            columns         => \@col_names,
+            column_settings => \@col_settings,
+            name            => $client_name,
+            endpoint        => \%endpoint,
+            inflators       => \@inflate,
+            deflators       => \@deflate,
+            trigger         => \%trigger,
+            receiver        => $receiver,
+            row_class       => $row_class,
             ($current->{__base_row_class} ? (base_row_class => $current->{__base_row_class}) : ()),
         ),
     );

@@ -21,6 +21,10 @@ has columns => (
     is  => 'rw',
     isa => 'ArrayRef'
 );
+has column_settings => (
+    is  => 'rw',
+    isa => 'ArrayRef',
+);
 has endpoint  => (
     is      => 'rw',
     isa     => 'HashRef',
@@ -155,15 +159,6 @@ sub call_trigger {
     for my $code (@{ $self->trigger->{$name} }) {
         $code->($args->{args}, $context);
     }
-}
-
-sub get_uri_builder {
-    my ($self, $endpoint_name) = @_;
-
-    return Spica::URIBuilder->new(
-        path_base => $self->endpoint->{$endpoint_name}{path},     
-        requires  => $self->endpoint->{$endpoint_name}{requires}, 
-    );
 }
 
 1;
