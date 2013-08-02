@@ -1,19 +1,19 @@
 use Test::More;
-use Spica::Schema::Declare;
+use Spica::Spec::Declare;
 
 subtest 'edge case' => sub {
-    my $klass = 'Spica::Test::Declare002Schema';
-    my $schema = schema {
+    my $klass = 'Spica::Test::Declare002Spec';
+    my $spec = spec {
         client {
             name 'foo';
         };
     } $klass;
 
-    ok $schema;
-    isa_ok $schema => $klass;
+    ok $spec;
+    isa_ok $spec => $klass;
 
-    ok ! $schema->get_client('bar'), "non exists client should return undef";
-    ok ! $schema->get_client(), "no name given should return undef";
+    ok ! $spec->get_client('bar'), "non exists client should return undef";
+    ok ! $spec->get_client(), "no name given should return undef";
 };
 
 done_testing;

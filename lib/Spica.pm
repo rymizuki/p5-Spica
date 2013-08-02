@@ -4,11 +4,14 @@ use warnings;
 use utf8;
 our $VERSION = '0.01';
 
-use Spica::Iterator;
-
 use Carp ();
-use Class::Load ();
 use URI;
+
+use Spica::Iterator;
+use Spica::Types qw(
+    SpecClass
+    ParserClass
+);
 
 use Mouse;
 
@@ -61,26 +64,17 @@ has suppress_object_creation => (
     default => 0,
 );
 
-has schema_class => (
-    is      => 'ro',
-    isa     => 'Str',
-    default => sub { "@{[ ref $_[0] ? ref $_[0] : $_[0] ]}::Schema" },
-);
-has parser_class => (
-    is      => 'ro',
-    isa     => 'Str',
-    default => 'Spica::Parser::JSON',
+has spec => (
+    is         => 'rw',
+    isa        => SpecClass,
+    coerce     => 1,
 );
 
-has schema => (
-    is         => 'rw',
-    isa        => 'Spica::Schema',
-    lazy_build => 1,
-);
 has parser => (
     is         => 'rw',
-    isa        => 'Object',
-    lazy_build => 1,
+    isa        => ParserClass,
+    coerce     => 1,
+    default    => 'Spica::Parser::JSON',
 );
 has fetcher => (
     is         => 'rw',
@@ -99,7 +93,7 @@ sub fetch {
         $endpoint_name = 'default';
     }
 
-    my $client = $self->schema->get_client($client_name)
+    my $client = $self->spec->get_client($client_name)
         or Carp::croak("No such client $client_name");
     my $suppres_object_creation = exists $option->{suppress_object_creation}
         ? delete $option->{suppress_object_creation}
@@ -112,8 +106,8 @@ sub fetch {
     my $iterator = Spica::Iterator->new(
         data                     => $content,
         spica                    => $self,
-        row_class                => $self->schema->get_row_class($client_name),
-        client                   => $self->schema->get_client($client_name),
+        row_class                => $self->spec->get_row_class($client_name),
+        client                   => $self->spec->get_client($client_name),
         client_naem              => $client_name,
         suppress_object_creation => $suppres_object_creation,
     );
@@ -130,7 +124,7 @@ sub save {
         $endpoint_name = 'default';
     }
 
-    my $client = $self->schema->get_client($client_name)
+    my $client = $self->spec->get_client($client_name)
         or Carp::croak("No such client $client_name");
     my $suppres_object_creation = exists $option->{suppress_object_creation}
         ? delete $option->{suppress_object_creation}
@@ -143,7 +137,7 @@ sub save {
     if ($suppres_object_creation) {
         return $content;
     } else {
-        return $self->schema->get_row_class($client_name)->new(
+        return $self->spec->get_row_class($client_name)->new(
             row_data       => $content,
             spica          => $self,
             client         => $client,
@@ -214,28 +208,6 @@ sub uri_for {
     $uri->query_form(+{ $uri->query_form => %$param });
 
     return $uri;
-}
-
-sub _build_schema {
-    my $self = shift;
-    my $schema_class = $self->{schema_class};
-    Class::Load::load_class( $schema_class );
-    my $schema = $schema_class->instance;
-
-    if (!$schema) {
-        Carp::croak("schema object was not passed, and could not get schema instance from ${schema_class}");
-    }
-
-    $schema->namespace(ref $self ? ref $self : $self);
-    return $schema;
-}
-
-sub _build_parser {
-    my $self = shift;
-    my $parser_class = $self->parser_class;
-    Class::Load::load_class( $parser_class );
-
-    return $parser_class->new;
 }
 
 use Furl;

@@ -6,9 +6,9 @@ use_ok $_ for qw(
     Spica::Parser
     Spica::Parser::JSON
     Spica::Row
-    Spica::Schema
-    Spica::Schema::Client
-    Spica::Schema::Declare
+    Spica::Spec
+    Spica::Spec::Client
+    Spica::Spec::Declare
     Spica::URIBuilder
 );
 

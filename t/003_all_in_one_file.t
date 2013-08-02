@@ -17,8 +17,8 @@ my $api = run_http_server {
 };
 
 {
-    package Mock::BasicALLINONE::Schema;
-    use Spica::Schema::Declare;
+    package Mock::BasicALLINONE::Spec;
+    use Spica::Spec::Declare;
 
     client {
         name 'mock_basic';
@@ -43,7 +43,7 @@ my $api = run_http_server {
 my $spica = Spica->new(
     host => '127.0.0.1',
     port => $api->port,
-    schema_class => 'Mock::BasicALLINONE::Schema',
+    spec => 'Mock::BasicALLINONE::Spec',
 );
 
 my $iter = $spica->fetch('mock_basic', +{});

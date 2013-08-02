@@ -5,8 +5,8 @@ use HTTP::Response;
 use Spica;
 
 {
-    package Mock::BasicRow::Schema;
-    use Spica::Schema::Declare;
+    package Mock::BasicRow::Spec;
+    use Spica::Spec::Declare;
 
     client {
         name 'mock_basic_row';
@@ -54,7 +54,7 @@ my $api = run_http_server {
 my $spica = Spica->new(
     host => '127.0.0.1',
     port => $api->port,
-    schema_class => 'Mock::BasicRow::Schema',
+    spec => 'Mock::BasicRow::Spec',
 );
 
 subtest 'your row class' => sub {
@@ -65,8 +65,8 @@ subtest 'your row class' => sub {
     is $row->foo => 'foo';
 };
 
-subtest 'row_class specific Schema.pm' => sub {
-    is +$spica->schema->get_row_class('mock_basic_row_foo') => 'Mock::BasicRow::FooRow';
+subtest 'row_class specific Spec.pm' => sub {
+    is +$spica->spec->get_row_class('mock_basic_row_foo') => 'Mock::BasicRow::FooRow';
 };
 
 subtest 'handle' => sub {

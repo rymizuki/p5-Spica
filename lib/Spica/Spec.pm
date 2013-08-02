@@ -1,12 +1,11 @@
-package Spica::Schema;
+package Spica::Spec;
 use strict;
 use warnings;
-use Spica::Row;
+use utf8;
 
 use Mouse;
 
-# XXX: $self->clientで呼び出すとSchema::Declare::client呼び出してしまう
-has client => (
+has clients => (
     is      => 'rw',
     isa     => 'HashRef',
     default => sub { +{} },
@@ -36,19 +35,19 @@ sub instance {
 
 sub add_client {
     my ($self, $client) = @_;
-    return $self->{client}{$client->name} = $client;
+    return $self->clients->{$client->name} = $client;
 }
 
 sub get_client {
     my ($self, $name) = @_;
     return unless $name;
-    return $self->{client}{$name};
+    return $self->clients->{$name};
 }
 
 sub get_row_class {
     my ($self, $client_name) = @_;
 
-    my $client = $self->{client}{$client_name};
+    my $client = $self->get_client($client_name);
     return $client->{row_class} if $client;
     return 'Spica::Row';
 }

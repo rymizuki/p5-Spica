@@ -1,79 +1,85 @@
-package Spica::Schema::Declare;
+package Spica::Spec::Declare;
 use strict;
 use warnings;
 use Exporter::Lite;
-use Spica::Schema;
-use Spica::Schema::Client;
+
+use Spica::Spec;
+use Spica::Spec::Client;
 
 our @EXPORT = qw(
-    schema
+    spec 
     name
     endpoint
     client
     columns
+    receiver
     row_class
     base_row_class
     inflate
     deflate
+    trigger
 );
 
 our $CURRENT_SCHEMA_CACHE;
 
-sub schema (&;$) {
+sub spec (&;$) {
     my ($code, $schme_class) = @_;
     local $CURRENT_SCHEMA_CACHE = $schme_class;
     $code->();
-    _current_schema();
+    _current_spec();
 }
 
 sub base_row_class ($) {
-    my $current = _current_schema();
+    my $current = _current_spec();
     $current->{__base_row_class} = $_[0];
 }
 
 sub row_namespace ($) {
     my $client_name = shift;
-    (my $caller = caller(1)) =~ s/::Schema$//;
-    join '::' => $caller, 'Row', Spica::Schema::camelize($client_name);
+    (my $caller = caller(1)) =~ s/::Spec$//;
+    join '::' => $caller, 'Row', Spica::Spec::camelize($client_name);
 }
 
-sub _current_schema {
+sub _current_spec {
     my $class = __PACKAGE__;
-    my $schema_class;
+    my $spec_class;
 
     if ($CURRENT_SCHEMA_CACHE) {
-        $schema_class = $CURRENT_SCHEMA_CACHE;
+        $spec_class = $CURRENT_SCHEMA_CACHE;
     } else {
         my $i = 1;
-        while ( $schema_class = caller($i++) ) {
-            last unless $schema_class->isa( $class );
+        while ( $spec_class = caller($i++) ) {
+            last unless $spec_class->isa( $class );
         }
     }
 
-    unless ($schema_class) {
+    unless ($spec_class) {
         Carp::confess("PANIC: cannot find a package naem this is not ISA ${class}");
     }
 
     no warnings 'once';
-    if (!$schema_class->isa('Spica::Schema')) {
+    if (!$spec_class->isa('Spica::Spec')) {
         no strict 'refs'; ## no critic
-        push @{"${schema_class}::ISA"} => 'Spica::Schema';
+        push @{"${spec_class}::ISA"} => 'Spica::Spec';
 
-        my $schema = $schema_class->new();
-        $schema_class->set_default_instance( $schema );
+        my $spec = $spec_class->new();
+        $spec_class->set_default_instance( $spec );
     }
 
-    return $schema_class->instance;
+    return $spec_class->instance;
 }
 
 sub columns (@);
 sub name ($);
 sub endpoint ($$@);
+sub receiver ($);
 sub row_class ($);
-sub inflate_rule ($@);
+sub inflate ($&);
+sub deflate ($&);
+sub trigger ($&);
 sub client (&) {
     my $code = shift;
-    my $current = _current_schema();
+    my $current = _current_spec();
 
     my (
         $client_name,
@@ -81,19 +87,24 @@ sub client (&) {
         %endpoint,
         @inflate,
         @deflate,
+        %trigger,
         $row_class,
+        $receiver,
     );
-    no warnings 'redefine';
 
     my $dest_class = caller();
+
     no strict 'refs'; ## no critic;
     no warnings 'once';
+    no warnings 'redefine';
     local *{"${dest_class}::name"} = sub ($) {
         $client_name = shift;
         $row_class = row_namespace($client_name);
+        $receiver = 'Spica::Iterator';
     };
-    local *{"${dest_class}::columns"}   = sub (@)    { @client_columns = @_ };
-    local *{"${dest_class}::row_class"} = sub (@)    { $row_class = shift };
+    local *{"${dest_class}::columns"}   = sub (@)   { @client_columns = @_ };
+    local *{"${dest_class}::receiver"}  = sub ($)   { $receiver = shift };
+    local *{"${dest_class}::row_class"} = sub ($)   { $row_class = shift };
     local *{"${dest_class}::endpoint"}  = sub ($$@) {
         my ($name, $path, $requires);
         if (@_ == 2) {
@@ -107,15 +118,19 @@ sub client (&) {
             requires => $requires,
         };
     };
-    local *{"${dest_class}::inflate"}   = sub ($&)   {
+    local *{"${dest_class}::inflate"}   = sub ($@)   {
         my ($rule, $code) = @_;
         $rule = qr/^\Q$rule\E$/ if ref $rule ne 'Regexp';
         push @inflate => ($rule, $code);
     };
-    local *{"${dest_class}::deflate"}   = sub ($&)   {
+    local *{"${dest_class}::deflate"}   = sub ($@)   {
         my ($rule, $code) = @_;
         $rule = qr/^\Q$rule\E$/ if ref $rule ne 'Regexp';
         push @deflate => ($rule, $code);
+    };
+    local *{"${dest_class}::trigger"} = sub ($@) {
+        my ($name, $code) = @_;
+        push @{ ($trigger{$name} ||= []) } => $code;
     };
 
     $code->();
@@ -129,13 +144,15 @@ sub client (&) {
         push @col_names => $col_name;
     }
 
-    $current->add_client( # TODO: あとでclientに変更
-        Spica::Schema::Client->new(
+    $current->add_client(
+        Spica::Spec::Client->new(
             columns   => \@col_names,
             name      => $client_name,
             endpoint  => \%endpoint,
             inflators => \@inflate,
             deflators => \@deflate,
+            trigger   => \%trigger,
+            receiver  => $receiver,
             row_class => $row_class,
             ($current->{__base_row_class} ? (base_row_class => $current->{__base_row_class}) : ()),
         ),

@@ -1,5 +1,56 @@
 {
    "modules" : {
+      "Any::Moose" : {
+         "dist" : "Any-Moose-0.21",
+         "mymeta" : {
+            "abstract" : "*deprecated* - use Moo instead!",
+            "author" : [
+               "Shawn M Moore <sartak@gmail.com>",
+               "Florian Ragwitz <rafl@debian.org>",
+               "Stevan Little <stevan@iinteractive.com>",
+               "Tokuhiro Matsuno <tokuhirom@gmail.com>",
+               "Goro Fuji <gfuji@cpan.org>",
+               "Ricardo Signes <rjbs@cpan.org>"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "Dist::Zilla version 4.300030, CPAN::Meta::Converter version 2.120921",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "Any-Moose",
+            "prereqs" : {
+               "build" : {
+                  "requires" : {}
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "6.30"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "Mouse" : "0.40"
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "version" : "0.21"
+         },
+         "name" : "Any::Moose",
+         "pathname" : "S/SA/SARTAK/Any-Moose-0.21.tar.gz",
+         "provides" : {
+            "Any::Moose" : {
+               "file" : "Any/Moose.pm",
+               "version" : "0.21"
+            }
+         },
+         "target" : "Any::Moose",
+         "version" : "0.21"
+      },
       "Apache::LogFormat::Compiler" : {
          "dist" : "Apache-LogFormat-Compiler-0.13",
          "mymeta" : {
@@ -592,6 +643,153 @@
          },
          "target" : "Data::OptList",
          "version" : "0.108"
+      },
+      "Data::Validator" : {
+         "dist" : "Data-Validator-1.03",
+         "mymeta" : {
+            "abstract" : "Rule based validator on type constraint system",
+            "author" : [
+               "Fuji, Goro (gfx) <gfuji@cpan.org>"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "Minilla/v0.4.5, CPAN::Meta::Converter version 2.120921",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "Data-Validator",
+            "no_index" : {
+               "directory" : [
+                  "t",
+                  "xt",
+                  "inc",
+                  "share",
+                  "eg",
+                  "examples",
+                  "author"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "6.59"
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "CPAN::Meta" : "0",
+                     "CPAN::Meta::Prereqs" : "0",
+                     "Module::Build" : "0.38"
+                  }
+               },
+               "develop" : {
+                  "requires" : {
+                     "Test::CPAN::Meta" : "0",
+                     "Test::MinimumVersion" : "0.10108",
+                     "Test::Pod" : "1.41",
+                     "Test::Spellunker" : "v0.2.7"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "Mouse" : "0.93",
+                     "perl" : "5.008001"
+                  }
+               },
+               "test" : {
+                  "requires" : {
+                     "Test::More" : "0.88",
+                     "Test::Requires" : "0"
+                  }
+               }
+            },
+            "provides" : {
+               "Data::Validator" : {
+                  "file" : "lib/Data/Validator.pm",
+                  "version" : "1.03"
+               },
+               "Data::Validator::Role::AllowExtra" : {
+                  "file" : "lib/Data/Validator/Role/AllowExtra.pm",
+                  "version" : "0"
+               },
+               "Data::Validator::Role::Croak" : {
+                  "file" : "lib/Data/Validator/Role/Croak.pm",
+                  "version" : "0"
+               },
+               "Data::Validator::Role::Method" : {
+                  "file" : "lib/Data/Validator/Role/Method.pm",
+                  "version" : "0"
+               },
+               "Data::Validator::Role::NoRestricted" : {
+                  "file" : "lib/Data/Validator/Role/NoRestricted.pm",
+                  "version" : "0"
+               },
+               "Data::Validator::Role::NoThrow" : {
+                  "file" : "lib/Data/Validator/Role/NoThrow.pm",
+                  "version" : "0"
+               },
+               "Data::Validator::Role::Sequenced" : {
+                  "file" : "lib/Data/Validator/Role/Sequenced.pm",
+                  "version" : "0"
+               },
+               "Data::Validator::Role::StrictSequenced" : {
+                  "file" : "lib/Data/Validator/Role/StrictSequenced.pm",
+                  "version" : "0"
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "bugtracker" : {
+                  "web" : "https://github.com/gfx/p5-Data-Validator/issues"
+               },
+               "homepage" : "https://github.com/gfx/p5-Data-Validator",
+               "repository" : {
+                  "type" : "git",
+                  "url" : "git://github.com/gfx/p5-Data-Validator.git",
+                  "web" : "https://github.com/gfx/p5-Data-Validator"
+               }
+            },
+            "version" : "1.03",
+            "x_contributors" : [
+               "karupanerura <karupa@cpan.org>",
+               "Fuji, Goro <fuji.goro@dena.jp>",
+               "Fuji, Goro <g.psy.va@gmail.com>"
+            ]
+         },
+         "name" : "Data::Validator",
+         "pathname" : "G/GF/GFUJI/Data-Validator-1.03.tar.gz",
+         "provides" : {
+            "Data::Validator" : {
+               "file" : "Data/Validator.pm",
+               "version" : "1.03"
+            },
+            "Data::Validator::Role::AllowExtra" : {
+               "file" : "Data/Validator/Role/AllowExtra.pm"
+            },
+            "Data::Validator::Role::Croak" : {
+               "file" : "Data/Validator/Role/Croak.pm"
+            },
+            "Data::Validator::Role::Method" : {
+               "file" : "Data/Validator/Role/Method.pm"
+            },
+            "Data::Validator::Role::NoRestricted" : {
+               "file" : "Data/Validator/Role/NoRestricted.pm"
+            },
+            "Data::Validator::Role::NoThrow" : {
+               "file" : "Data/Validator/Role/NoThrow.pm"
+            },
+            "Data::Validator::Role::Sequenced" : {
+               "file" : "Data/Validator/Role/Sequenced.pm"
+            },
+            "Data::Validator::Role::StrictSequenced" : {
+               "file" : "Data/Validator/Role/StrictSequenced.pm"
+            }
+         },
+         "target" : "Data::Validator",
+         "version" : "1.03"
       },
       "Devel::StackTrace" : {
          "dist" : "Devel-StackTrace-1.30",
@@ -3307,6 +3505,87 @@
          },
          "target" : "Mouse",
          "version" : "1.11"
+      },
+      "MouseX::Types" : {
+         "dist" : "MouseX-Types-0.06",
+         "mymeta" : {
+            "abstract" : "Organize your Mouse types in libraries",
+            "author" : [
+               "Kazuhiro Osawa <yappo <at> shibuya <döt> pl>"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "Module::Install version 1.02, CPAN::Meta::Converter version 2.120921",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "MouseX-Types",
+            "no_index" : {
+               "directory" : [
+                  "inc",
+                  "t",
+                  "xt"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "6.42",
+                     "Scalar::Util" : "0",
+                     "Test::Exception" : "0",
+                     "Test::More" : "0"
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "6.42"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "Any::Moose" : "0.15",
+                     "Mouse" : "0.77",
+                     "perl" : "5.006002"
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "license" : [
+                  "http://dev.perl.org/licenses/"
+               ],
+               "repository" : {
+                  "type" : "git",
+                  "url" : "git://github.com/yappo/p5-mousex-types.git"
+               }
+            },
+            "version" : "0.06"
+         },
+         "name" : "MouseX::Types",
+         "pathname" : "G/GF/GFUJI/MouseX-Types-0.06.tar.gz",
+         "provides" : {
+            "MouseX::Types" : {
+               "file" : "MouseX/Types.pm",
+               "version" : "0.06"
+            },
+            "MouseX::Types::Base" : {
+               "file" : "MouseX/Types.pm"
+            },
+            "MouseX::Types::Moose" : {
+               "file" : "MouseX/Types/Moose.pm"
+            },
+            "MouseX::Types::Mouse" : {
+               "file" : "MouseX/Types/Mouse.pm"
+            },
+            "MouseX::Types::TypeDecorator" : {
+               "file" : "MouseX/Types/TypeDecorator.pm"
+            }
+         },
+         "target" : "MouseX::Types",
+         "version" : "0.06"
       },
       "Mozilla::CA" : {
          "dist" : "Mozilla-CA-20130114",
