@@ -6828,6 +6828,425 @@
          },
          "target" : "WWW::RobotRules",
          "version" : "6.02"
+      },
+      "XML::NamespaceSupport" : {
+         "dist" : "XML-NamespaceSupport-1.11",
+         "mymeta" : {
+            "abstract" : "a simple generic namespace support class",
+            "author" : [
+               "Robin Berjon, robin@knowscape.com, with lots of it having been done"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "Module::Install version 0.95, CPAN::Meta::Converter version 2.120921",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "XML-NamespaceSupport",
+            "no_index" : {
+               "directory" : [
+                  "inc",
+                  "t"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "6.42",
+                     "Test::More" : "0.47"
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "6.42"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {}
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "license" : [
+                  "http://dev.perl.org/licenses/"
+               ],
+               "repository" : {
+                  "type" : "git",
+                  "url" : "git://github.com/perigrin/xml-namespacesupport.git"
+               }
+            },
+            "version" : "1.11"
+         },
+         "name" : "XML::NamespaceSupport",
+         "pathname" : "P/PE/PERIGRIN/XML-NamespaceSupport-1.11.tar.gz",
+         "provides" : {
+            "XML::NamespaceSupport" : {
+               "file" : "XML/NamespaceSupport.pm",
+               "version" : "1.11"
+            }
+         },
+         "target" : "XML::NamespaceSupport",
+         "version" : "1.11"
+      },
+      "XML::Parser" : {
+         "dist" : "XML-Parser-2.41",
+         "mymeta" : {
+            "abstract" : "A perl module for parsing XML documents",
+            "author" : [
+               "Clark Cooper (coopercc@netheaven.com)"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "ExtUtils::MakeMaker version 6.56, CPAN::Meta::Converter version 2.120921",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "XML-Parser",
+            "no_index" : {
+               "directory" : [
+                  "t",
+                  "inc"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "0"
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "0"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "LWP" : "0",
+                     "perl" : "5.00405"
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "repository" : {
+                  "url" : "http://github.com/chorny/XML-Parser"
+               }
+            },
+            "version" : "2.41"
+         },
+         "name" : "XML::Parser",
+         "pathname" : "T/TO/TODDR/XML-Parser-2.41.tar.gz",
+         "provides" : {
+            "XML::Parser" : {
+               "file" : "XML/Parser.pm",
+               "version" : "2.41"
+            },
+            "XML::Parser::Expat" : {
+               "file" : "XML/Parser/Expat.pm",
+               "version" : "2.41"
+            },
+            "XML::Parser::Style::Debug" : {
+               "file" : "XML/Parser/Style/Debug.pm"
+            },
+            "XML::Parser::Style::Objects" : {
+               "file" : "XML/Parser/Style/Objects.pm"
+            },
+            "XML::Parser::Style::Stream" : {
+               "file" : "XML/Parser/Style/Stream.pm"
+            },
+            "XML::Parser::Style::Subs" : {
+               "file" : "XML/Parser/Style/Subs.pm"
+            },
+            "XML::Parser::Style::Tree" : {
+               "file" : "XML/Parser/Style/Tree.pm"
+            }
+         },
+         "target" : "XML::Parser",
+         "version" : "2.41"
+      },
+      "XML::SAX" : {
+         "dist" : "XML-SAX-0.99",
+         "mymeta" : {
+            "abstract" : "unknown",
+            "author" : [
+               "unknown"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "ExtUtils::MakeMaker version 6.55_02, CPAN::Meta::Converter version 2.120921",
+            "license" : [
+               "unknown"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "XML-SAX",
+            "no_index" : {
+               "directory" : [
+                  "t",
+                  "inc"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "0"
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "0"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "File::Temp" : "0",
+                     "XML::NamespaceSupport" : "0.03",
+                     "XML::SAX::Base" : "1.05"
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "version" : "0.99"
+         },
+         "name" : "XML::SAX",
+         "pathname" : "G/GR/GRANTM/XML-SAX-0.99.tar.gz",
+         "provides" : {
+            "XML::SAX" : {
+               "file" : "XML/SAX.pm",
+               "version" : "0.99"
+            },
+            "XML::SAX::DocumentLocator" : {
+               "file" : "XML/SAX/DocumentLocator.pm"
+            },
+            "XML::SAX::ParserFactory" : {
+               "file" : "XML/SAX/ParserFactory.pm",
+               "version" : "1.01"
+            },
+            "XML::SAX::PurePerl" : {
+               "file" : "XML/SAX/PurePerl.pm",
+               "version" : "0.99"
+            },
+            "XML::SAX::PurePerl::DebugHandler" : {
+               "file" : "XML/SAX/PurePerl/DebugHandler.pm"
+            },
+            "XML::SAX::PurePerl::Exception" : {
+               "file" : "XML/SAX/PurePerl/Exception.pm"
+            },
+            "XML::SAX::PurePerl::Productions" : {
+               "file" : "XML/SAX/PurePerl/Productions.pm"
+            },
+            "XML::SAX::PurePerl::Reader" : {
+               "file" : "XML/SAX/PurePerl/Reader.pm"
+            },
+            "XML::SAX::PurePerl::Reader::Stream" : {
+               "file" : "XML/SAX/PurePerl/Reader/Stream.pm"
+            },
+            "XML::SAX::PurePerl::Reader::String" : {
+               "file" : "XML/SAX/PurePerl/Reader/String.pm"
+            },
+            "XML::SAX::PurePerl::Reader::URI" : {
+               "file" : "XML/SAX/PurePerl/Reader/URI.pm"
+            }
+         },
+         "target" : "XML::SAX",
+         "version" : "0.99"
+      },
+      "XML::SAX::Base" : {
+         "dist" : "XML-SAX-Base-1.08",
+         "mymeta" : {
+            "abstract" : "Base class for SAX Drivers and Filters",
+            "author" : [
+               "Grant McLean <grantm@cpan.org>"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "Dist::Zilla version 4.200004, CPAN::Meta::Converter version 2.101670, CPAN::Meta::Converter version 2.120921",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "XML-SAX-Base",
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "Test::More" : "0.88"
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "6.31"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {}
+               },
+               "test" : {
+                  "requires" : {
+                     "Test::More" : "0.88"
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "repository" : {
+                  "type" : "git",
+                  "url" : "git://github.com/grantm/XML-SAX-Base.git",
+                  "web" : "http://github.com/grantm/XML-SAX-Base"
+               }
+            },
+            "version" : "1.08"
+         },
+         "name" : "XML::SAX::Base",
+         "pathname" : "G/GR/GRANTM/XML-SAX-Base-1.08.tar.gz",
+         "provides" : {
+            "XML::SAX::Base" : {
+               "file" : "XML/SAX/Base.pm",
+               "version" : "1.08"
+            },
+            "XML::SAX::Base::NoHandler" : {
+               "file" : "XML/SAX/Base.pm",
+               "version" : "1.08"
+            },
+            "XML::SAX::Exception" : {
+               "file" : "XML/SAX/Exception.pm",
+               "version" : "1.08"
+            }
+         },
+         "target" : "XML::SAX::Base",
+         "version" : "1.08"
+      },
+      "XML::SAX::Expat" : {
+         "dist" : "XML-SAX-Expat-0.50",
+         "mymeta" : {
+            "abstract" : "SAX Driver for Expat",
+            "author" : [
+               "Robin Berjon"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "ExtUtils::MakeMaker version 6.6302, CPAN::Meta::Converter version 2.120921",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "XML-SAX-Expat",
+            "no_index" : {
+               "directory" : [
+                  "t",
+                  "inc"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "0"
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "0"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "XML::NamespaceSupport" : "0.03",
+                     "XML::Parser" : "2.27",
+                     "XML::SAX" : "0.03",
+                     "XML::SAX::Base" : "1.00"
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "repository" : {
+                  "url" : "https://github.com/hoehrmann/XML-SAX-Expat"
+               }
+            },
+            "version" : "0.50"
+         },
+         "name" : "XML::SAX::Expat",
+         "pathname" : "B/BJ/BJOERN/XML-SAX-Expat-0.50.tar.gz",
+         "provides" : {
+            "XML::SAX::Expat" : {
+               "file" : "XML/SAX/Expat.pm",
+               "version" : "0.50"
+            }
+         },
+         "target" : "XML::SAX::Expat",
+         "version" : "0.50"
+      },
+      "XML::Simple" : {
+         "dist" : "XML-Simple-2.20",
+         "mymeta" : {
+            "abstract" : "Easily read/write XML (esp config files)",
+            "author" : [
+               "Grant McLean <grantm@cpan.org>"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "Dist::Zilla version 4.200004, CPAN::Meta::Converter version 2.101670, CPAN::Meta::Converter version 2.120921",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "XML-Simple",
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "Test::More" : "0.88"
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "6.31"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "XML::NamespaceSupport" : "1.04",
+                     "XML::SAX" : "0.15",
+                     "XML::SAX::Expat" : "0"
+                  }
+               },
+               "test" : {
+                  "requires" : {
+                     "Test::More" : "0.88"
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "repository" : {
+                  "type" : "git",
+                  "url" : "git://github.com/grantm/xml-simple.git",
+                  "web" : "http://github.com/grantm/xml-simple"
+               }
+            },
+            "version" : "2.20"
+         },
+         "name" : "XML::Simple",
+         "pathname" : "G/GR/GRANTM/XML-Simple-2.20.tar.gz",
+         "provides" : {
+            "XML::Simple" : {
+               "file" : "XML/Simple.pm",
+               "version" : "2.20"
+            }
+         },
+         "target" : "XML::Simple",
+         "version" : "2.20"
       }
    },
    "version" : "0.9"

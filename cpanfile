@@ -7,6 +7,7 @@ requires 'Mouse'           => '0.93';
 requires 'MouseX::Types'   => '0.01';
 requires 'Furl'            => '0.20';
 requires 'JSON'            => '2.15';
+requires 'XML::Simple';
 requires 'Exporter::Lite'  => '0.02';
 
 on 'test' => sub {
