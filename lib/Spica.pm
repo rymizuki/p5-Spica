@@ -94,12 +94,8 @@ sub fetch {
         $endpoint_name = 'default';
     }
 
-    my $client = $self->spec->get_client($client_name)
+    my $client = $option->{client} = $self->spec->get_client($client_name)
         or Carp::croak("No such client $client_name");
-
-    my $suppres_object_creation = exists $option->{suppress_object_creation}
-        ? delete $option->{suppress_object_creation}
-        : $self->suppress_object_creation;
 
     my $uri_builder = Spica::URIBuilder->new(
         scheme    => $self->scheme,
@@ -109,18 +105,7 @@ sub fetch {
         requires  => $client->endpoint->{$endpoint_name}{requires},
     )->create($param);
 
-    my $content = $self->request('GET', $uri_builder, $option);
-
-    my $iterator = $client->receiver->new(
-        data                     => $content,
-        spica                    => $self,
-        row_class                => $self->spec->get_row_class($client_name),
-        client                   => $self->spec->get_client($client_name),
-        client_naem              => $client_name,
-        suppress_object_creation => $suppres_object_creation,
-    );
-
-    return wantarray ? $iterator->all : $iterator;
+    return $self->execute('GET', $uri_builder, $option);
 }
 
 sub save {
@@ -155,8 +140,8 @@ sub save {
     }
 }
 
-sub request {
-    my $self = shift;
+sub execute {
+    my $self   = shift;
     my $method = shift;
 
     my ($builder, $option) = sub {
@@ -176,25 +161,55 @@ sub request {
         return ($builder, shift(@_) || +{});
     }->(@_);
 
-    if ($method eq 'GET' && keys %{ $builder->param }) {
-        # CONTENT is not available, I will grant PATH_QUERY.
-        # make PATH_QUERY and delete params.
-        $builder->create_query;
-    }
+    my $client = $option->{client};
 
-    my $response = $self->fetcher->request(
-        method  => $method,
-        url     => $builder->uri->as_string,
-        content => $builder->param,
-        headers => [], # TODO custom any headers.
-    );
+    my $response = $self->request($method, $builder);
 
     if (!$response->is_success) {
         # throw Exception
         Carp::croak("Invalid response. code is '@{[$response->status]}'");
     }
 
-    return $self->parse($response->content);
+    my $data = $self->parse($response->content);
+
+    my $suppres_object_creation = exists $option->{suppress_object_creation}
+        ? $option->{suppress_object_creation}
+        : $self->suppress_object_creation
+        ;
+
+    if (!$client || $suppres_object_creation) {
+        return $data;
+    } else {
+        my $iterator = $client->receiver->new(
+            data                     => $data,
+            spica                    => $self,
+            row_class                => $self->spec->get_row_class($client->name),
+            client                   => $client,
+            client_name              => $client->name,
+            suppress_object_creation => $suppres_object_creation,
+        );
+
+        return wantarray ? $iterator->all : $iterator;
+    }
+}
+
+sub request {
+    my ($self, $method, $builder) = @_;
+
+    if ($method eq 'GET' && keys %{ $builder->param }) {
+        # CONTENT is not available, I will gran PATH_QUERY.
+        # make PATH_QUERY and delete PARAMS,
+        $builder->create_query;
+    }
+
+    my $response = $self->fetcher->request(
+        method => $method,
+        url    => $builder->uri->as_string,
+        content => $builder->param,
+        headers => [], # TODO custom any header use.
+    );
+
+    return $response;
 }
 
 sub parse {
