@@ -32,8 +32,8 @@ my $api = run_http_server {
 }
 
 {
-    package Mock::Inflate::Schema;
-    use Spica::Schema::Declare;
+    package Mock::Inflate::Spec;
+    use Spica::Spec::Declare;
 
     client {
         name 'mock_basic';
@@ -56,7 +56,7 @@ subtest 'fetch' => sub {
     my $spica = Spica->new(
         host => '127.0.0.1',
         port => $api->port,
-        schema_class => 'Mock::Inflate::Schema',
+        spec => 'Mock::Inflate::Spec',
     );
 
     my $row = $spica->fetch('mock_basic', +{})->next;

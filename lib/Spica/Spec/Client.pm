@@ -1,9 +1,15 @@
-package Spica::Schema::Client;
+package Spica::Spec::Client;
 use strict;
 use warnings;
+use utf8;
+use feature qw(state);
 
+use Carp ();
 use Class::Load ();
+use Data::Validator;
+
 use Spica::URIBuilder;
+use Spica::Iterator;
 
 use Mouse;
 
@@ -14,11 +20,6 @@ has name => (
 has columns => (
     is  => 'rw',
     isa => 'ArrayRef'
-);
-has escaped_columns => (
-    is      => 'rw',
-    isa     => 'ArrayRef',
-    default => sub { [] },
 );
 has endpoint  => (
     is      => 'rw',
@@ -38,10 +39,19 @@ has row_class => (
     is  => 'rw',
     isa => 'Str',
 );
+has receiver => (
+    is      => 'rw',
+    isa     => 'Str',
+);
 has base_row_class => (
     is      => 'rw',
     isa     => 'Str',
     default => 'Spica::Row',
+);
+has trigger => (
+    is      => 'rw',
+    isa     => 'HashRef',
+    default => sub { +{} },
 );
 
 sub BUILD {
@@ -90,7 +100,6 @@ sub add_inflator {
         Carp::croak('inflate code must be coderef.');
     }
     push @{ $self->{inflators} } => ($rule , $code);
-
 }
 
 sub call_deflate {
@@ -117,6 +126,35 @@ sub call_inflate {
         }
     }
     return $col_value;
+}
+
+sub add_trigger {
+    state $rule = Data::Validator->new(
+        name => 'Str',
+        code => 'CodeRef',
+    )->with(qw(Method Sequenced));
+    my ($self, $args) = $rule->validate(@_);
+
+    my $name = $args->{name};
+    my $code = $args->{code};
+
+    push @{ $self->trigger->{$name} } => $code;
+}
+
+sub call_trigger {
+    state $rule = Data::Validator->new(
+        name    => 'Str',
+        args    => +{isa => 'HashRef', default => sub { +{} }},
+        context => +{isa => 'Spica', optional => 1},
+    )->with(qw(Method));
+    my ($self, $args) = $rule->validate(@_);
+
+    my $name = $args->{name};
+    my $context = exists $args->{context} ? $args->{context} : undef;
+
+    for my $code (@{ $self->trigger->{$name} }) {
+        $code->($args->{args}, $context);
+    }
 }
 
 sub get_uri_builder {

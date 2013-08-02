@@ -15,7 +15,7 @@ has row_class => (
 );
 has client => (
     is  => 'ro',
-    isa => 'Spica::Schema::Client',
+    isa => 'Spica::Spec::Client',
 );
 has client_name => (
     is  => 'ro',
