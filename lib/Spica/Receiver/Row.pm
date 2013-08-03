@@ -1,4 +1,4 @@
-package Spica::Row;
+package Spica::Receiver::Row;
 use strict;
 use warnings;
 

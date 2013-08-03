@@ -28,10 +28,10 @@ use Spica;
     };
 
     package Mock::BasicRow::FooRow;
-    use parent 'Spica::Row';
+    use parent 'Spica::Receiver::Row';
 
     package Mock::BasicRow::Row::MockBasicRow;
-    use parent 'Spica::Row';
+    use parent 'Spica::Receiver::Row';
 
     sub foo {
         'foo'

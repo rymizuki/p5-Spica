@@ -61,7 +61,7 @@ subtest 'fetch' => sub {
 
     my $row = $spica->fetch('mock_basic', +{})->next;
 
-    isa_ok $row => 'Spica::Row';
+    isa_ok $row => 'Spica::Receiver::Row';
     isa_ok $row->result => 'Mock::Inflate::Result';
     is $row->result->result => 'success';
 };

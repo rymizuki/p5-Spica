@@ -1,4 +1,4 @@
-package Spica::Iterator;
+package Spica::Receiver::Iterator;
 use strict;
 use warnings;
 use 5.10.0;

@@ -49,7 +49,7 @@ sub get_row_class {
 
     my $client = $self->get_client($client_name);
     return $client->{row_class} if $client;
-    return 'Spica::Row';
+    return 'Spica::Receiver::Row';
 }
 
 sub camelize {

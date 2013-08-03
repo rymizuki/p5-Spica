@@ -2,10 +2,10 @@ use Test::More;
 
 use_ok $_ for qw(
     Spica
-    Spica::Iterator
     Spica::Parser
     Spica::Parser::JSON
-    Spica::Row
+    Spica::Receiver::Iterator
+    Spica::Receiver::Row
     Spica::Spec
     Spica::Spec::Client
     Spica::Spec::Declare

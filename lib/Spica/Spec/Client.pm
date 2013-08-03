@@ -9,7 +9,6 @@ use Class::Load ();
 use Data::Validator;
 
 use Spica::URIBuilder;
-use Spica::Iterator;
 
 use Mouse;
 
@@ -50,7 +49,7 @@ has receiver => (
 has base_row_class => (
     is      => 'rw',
     isa     => 'Str',
-    default => 'Spica::Row',
+    default => 'Spica::Receiver::Row',
 );
 has trigger => (
     is      => 'rw',

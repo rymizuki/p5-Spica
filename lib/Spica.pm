@@ -7,7 +7,7 @@ our $VERSION = '0.01';
 use Carp ();
 use URI;
 
-use Spica::Iterator;
+use Spica::Receiver::Iterator;
 use Spica::Types qw(
     SpecClass
     ParserClass

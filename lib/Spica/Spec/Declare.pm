@@ -100,7 +100,7 @@ sub client (&) {
     local *{"${dest_class}::name"} = sub ($) {
         $client_name = shift;
         $row_class = row_namespace($client_name);
-        $receiver = 'Spica::Iterator';
+        $receiver = 'Spica::Receiver::Iterator';
     };
     local *{"${dest_class}::columns"}   = sub (@)   { @client_columns = @_ };
     local *{"${dest_class}::receiver"}  = sub ($)   { $receiver = shift };

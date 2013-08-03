@@ -35,7 +35,7 @@ my $api = run_http_server {
 
 {
     package Mock::BasicALLINONE::Row::MockBasic;
-    use parent 'Spica::Row';
+    use parent 'Spica::Receiver::Row';
 
     1;
 }
@@ -47,7 +47,7 @@ my $spica = Spica->new(
 );
 
 my $iter = $spica->fetch('mock_basic', +{});
-isa_ok $iter => 'Spica::Iterator';
+isa_ok $iter => 'Spica::Receiver::Iterator';
 
 my $row = $iter->next;
 isa_ok $row => 'Mock::BasicALLINONE::Row::MockBasic';
