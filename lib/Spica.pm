@@ -171,8 +171,8 @@ sub request {
     }
 
     my $response = $self->fetcher->request(
-        method => $method,
-        url    => $builder->uri->as_string,
+        method  => $method,
+        url     => $builder->uri->as_string,
         content => $builder->param,
         headers => [], # TODO custom any header use.
     );
