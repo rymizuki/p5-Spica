@@ -68,6 +68,7 @@ has spec => (
     is         => 'rw',
     isa        => SpecClass,
     coerce     => 1,
+    lazy       => 1,
     default    => sub { "@{[ref $_[0] ? ref $_[0] : $_[0]]}::Spec" },
 );
 
@@ -118,12 +119,11 @@ sub execute {
             $builder = shift @_;
         } else {
             $builder = Spica::URIBuilder->new(
-                scheme => $self->scheme,
-                host   => $self->host,
-                port   => $self->port,
-                path   => shift(@_),
-                param  => shift(@_) || +{},
-            );
+                scheme    => $self->scheme,
+                host      => $self->host,
+                port      => $self->port,
+                path_base => shift(@_),
+            )->create(shift(@_) || +{});
         }
 
         return ($builder, shift(@_) || +{});
