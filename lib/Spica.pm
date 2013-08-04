@@ -108,38 +108,6 @@ sub fetch {
     return $self->execute('GET', $uri_builder, $option);
 }
 
-sub save {
-    my ($self, $client_name, $endpoint_name, $param, $option) = @_;
-
-    if (ref $endpoint_name && ref $endpoint_name eq 'HASH') {
-        $option = $param;
-        $param  = $endpoint_name;
-        $endpoint_name = 'default';
-    }
-
-    my $client = $self->spec->get_client($client_name)
-        or Carp::croak("No such client $client_name");
-    my $suppres_object_creation = exists $option->{suppress_object_creation}
-        ? delete $option->{suppress_object_creation}
-        : $self->suppress_object_creation;
-
-    my $uri_builder = $client->get_uri_builder($endpoint_name)->create($param);
-
-    my $content = $self->request('POST', $uri_builder, $option);
-
-    if ($suppres_object_creation) {
-        return $content;
-    } else {
-        return $self->spec->get_row_class($client_name)->new(
-            row_data       => $content,
-            spica          => $self,
-            client         => $client,
-            client_naem    => $client_name,
-            select_columns => $self->{select_columns},
-        );
-    }
-}
-
 sub execute {
     my $self   = shift;
     my $method = shift;
