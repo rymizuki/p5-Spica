@@ -8,6 +8,7 @@ use Carp ();
 use URI;
 
 use Spica::Receiver::Iterator;
+use Spica::URIBuilder;
 use Spica::Types qw(
     SpecClass
     ParserClass
