@@ -1,36 +1,65 @@
 package Spica::Receiver::Row;
 use strict;
 use warnings;
+use utf8;
 
 use Carp ();
 
-our $AUTOLOAD;
+use Mouse;
 
-sub new {
-    my ($class, %args) = @_;
-    my $self = bless {
-        # inflated values
-        _get_column_cached => +{},
-        # values will be updated
-        _dirty_columns => +{},
-        _autoload_column_cache => +{},
-        %args,
-    } => $class;
+has row_data => (
+    is      => 'ro',
+    isa     => 'HashRef',
+    default => sub { +{} },
+);
+has select_columns => (
+    is      => 'ro',
+    isa     => 'ArrayRef|Undef',
+    default => sub {
+        return [keys %{ shift->row_data }],
+    },
+);
+has spica => (
+    is  => 'ro',
+    isa => 'Spica',
+);
+has client => (
+    is      => 'ro',
+    isa     => 'Spica::Spec::Client',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+        return $self->spica->spec->get_client($self->client_name);
+    },
+);
+has client_name => (
+    is  => 'ro',
+    isa => 'Str',
+);
 
-    $self->{select_columns} ||= [keys %{ $args{row_data} }];
-    $self->{client} ||= $args{spica}->spec->get_client($args{client_name});
+sub BUILD {
+    my $self = shift;
 
-    if (@{ $self->{client}->column_settings }) {
+    # inflated values
+    $self->{_get_column_cached} = +{};
+    # values will be updated
+    $self->{_dirty_columns} = +{};
+    $self->{_autoload_column_cache} = +{};
+
+    if (@{ $self->client->column_settings }) {
         $self->{row_data_origin} = $self->{row_data};
-        for my $column (@{ $self->{client}->column_settings }) {
+
+        for my $column (@{ $self->client->column_settings }) {
             my $name = $column->{name};
             my $from = $column->{from};
             $self->{row_data}{$name} = $self->{row_data_origin}{$from};
         }
     }
-
-    return $self;
 }
+
+no Mouse;
+
+our $AUTOLOAD;
 
 sub generate_column_accessor {
     my ($x, $column) = @_;
@@ -46,7 +75,7 @@ sub generate_column_accessor {
     };
 }
 
-sub handle { $_[0]->{spica} }
+sub handle { $_[0]->spica }
 
 sub get {
     my ($self, $column) = @_;
@@ -59,8 +88,8 @@ sub get {
     my $data = $cache->{$column};
 
     unless ($data) {
-        $data = $cache->{$column} = $self->{client} ?
-            $self->{client}->call_inflate($column => $self->get_column($column)) :
+        $data = $cache->{$column} = $self->client ?
+            $self->client->call_inflate($column => $self->get_column($column)) :
             $self->get_column($column);
     }
 
@@ -69,7 +98,7 @@ sub get {
 
 sub set {
     my ($self, $column, $value) = @_;
-    $self->set_column($column => $self->{client}->call_deflate($column, $value));
+    $self->set_column($column => $self->client->call_deflate($column, $value));
     delete $self->{_get_column_cached}{$column};
     return $self;
 }
@@ -96,7 +125,7 @@ sub get_columns {
     my $self = shift;
 
     my %data;
-    for my $column (@{ $self->{select_columns} }) {
+    for my $column (@{ $self->select_columns }) {
         $data{$column} = $self->get_column($column);
     }
     return \%data;
