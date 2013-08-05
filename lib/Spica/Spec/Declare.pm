@@ -18,6 +18,7 @@ our @EXPORT = qw(
     inflate
     deflate
     trigger
+    filter
 );
 
 our $CURRENT_SCHEMA_CACHE;
@@ -77,6 +78,7 @@ sub row_class ($);
 sub inflate ($&);
 sub deflate ($&);
 sub trigger ($&);
+sub filter ($&);
 sub client (&) {
     my $code = shift;
     my $current = _current_spec();
@@ -88,6 +90,7 @@ sub client (&) {
         @inflate,
         @deflate,
         %trigger,
+        %filter,
         $row_class,
         $receiver,
     );
@@ -132,6 +135,10 @@ sub client (&) {
         my ($name, $code) = @_;
         push @{ ($trigger{$name} ||= []) } => $code;
     };
+    local *{"${dest_class}::filter"} = sub ($@) {
+        my ($name, $code) = @_;
+        push @{ ($filter{$name} ||= []) } => $code;
+    };
 
     $code->();
 
@@ -145,20 +152,27 @@ sub client (&) {
         push @col_names => $col_name;
     }
 
-    $current->add_client(
-        Spica::Spec::Client->new(
-            columns         => \@col_names,
-            column_settings => \@col_settings,
-            name            => $client_name,
-            endpoint        => \%endpoint,
-            inflators       => \@inflate,
-            deflators       => \@deflate,
-            trigger         => \%trigger,
-            receiver        => $receiver,
-            row_class       => $row_class,
-            ($current->{__base_row_class} ? (base_row_class => $current->{__base_row_class}) : ()),
-        ),
+    my $client = Spica::Spec::Client->new(
+        columns         => \@col_names,
+        column_settings => \@col_settings,
+        name            => $client_name,
+        endpoint        => \%endpoint,
+        inflators       => \@inflate,
+        deflators       => \@deflate,
+        trigger         => \%trigger,
+        receiver        => $receiver,
+        row_class       => $row_class,
+        ($current->{__base_row_class} ? (base_row_class => $current->{__base_row_class}) : ()),
     );
+
+    for my $name (keys %trigger) {
+        $client->add_trigger($name => $_) for @{ $trigger{$name} };
+    }
+    for my $name (keys %filter) {
+        $client->add_filter($name => $_) for @{ $filter{$name} };
+    }
+
+    $current->add_client($client);
 }
 
 1;

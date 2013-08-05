@@ -9,6 +9,8 @@ use Class::Load ();
 use Data::Validator;
 
 use Spica::URIBuilder;
+use Spica::Trigger;
+use Spica::Filter;
 
 use Mouse;
 
@@ -50,11 +52,6 @@ has base_row_class => (
     is      => 'rw',
     isa     => 'Str',
     default => 'Spica::Receiver::Row',
-);
-has trigger => (
-    is      => 'rw',
-    isa     => 'HashRef',
-    default => sub { +{} },
 );
 
 sub BUILD {
@@ -129,35 +126,6 @@ sub call_inflate {
         }
     }
     return $col_value;
-}
-
-sub add_trigger {
-    state $rule = Data::Validator->new(
-        name => 'Str',
-        code => 'CodeRef',
-    )->with(qw(Method Sequenced));
-    my ($self, $args) = $rule->validate(@_);
-
-    my $name = $args->{name};
-    my $code = $args->{code};
-
-    push @{ $self->trigger->{$name} } => $code;
-}
-
-sub call_trigger {
-    state $rule = Data::Validator->new(
-        name    => 'Str',
-        args    => +{isa => 'HashRef', default => sub { +{} }},
-        context => +{isa => 'Spica', optional => 1},
-    )->with(qw(Method));
-    my ($self, $args) = $rule->validate(@_);
-
-    my $name = $args->{name};
-    my $context = exists $args->{context} ? $args->{context} : undef;
-
-    for my $code (@{ $self->trigger->{$name} }) {
-        $code->($args->{args}, $context);
-    }
 }
 
 1;

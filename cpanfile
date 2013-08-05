@@ -9,6 +9,7 @@ requires 'Furl'            => '0.20';
 requires 'JSON'            => '2.15';
 requires 'XML::Simple';
 requires 'Exporter::Lite'  => '0.02';
+requires 'Scalar::Util';
 
 on 'test' => sub {
     requires 'Test::More' => '0.98';
