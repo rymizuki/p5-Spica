@@ -159,7 +159,6 @@ sub client (&) {
         endpoint        => \%endpoint,
         inflators       => \@inflate,
         deflators       => \@deflate,
-        trigger         => \%trigger,
         receiver        => $receiver,
         row_class       => $row_class,
         ($current->{__base_row_class} ? (base_row_class => $current->{__base_row_class}) : ()),

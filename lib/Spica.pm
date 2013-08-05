@@ -141,6 +141,13 @@ sub execute {
 
     my $data = $self->parse($response->content);
 
+    if ($client) {
+        $client->call_trigger(before_receive => ($self, $data));
+        for my $code ($client->get_filter_code('before_receive')) {
+            $data = $code->($self, $data);
+        }
+    }
+
     my $suppres_object_creation = exists $option->{suppress_object_creation}
         ? $option->{suppress_object_creation}
         : $self->suppress_object_creation

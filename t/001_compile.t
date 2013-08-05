@@ -10,6 +10,8 @@ use_ok $_ for qw(
     Spica::Spec::Client
     Spica::Spec::Declare
     Spica::URIBuilder
+    Spica::Trigger
+    Spica::Filter
 );
 
 done_testing;
