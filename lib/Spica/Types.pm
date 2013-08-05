@@ -20,9 +20,7 @@ use MouseX::Types::Mouse qw(
     Object
 );
 
-subtype SpecClass,
-    as Object,
-    where { $_->isa('Spica::Spec') };
+class_type SpecClass, { class => 'Spica::Spec' };
 
 subtype SpecClassName,
     as Str;
@@ -31,9 +29,7 @@ coerce SpecClass,
     from SpecClassName,
         via { Mouse::Util::load_class($_)->instance };
 
-subtype ParserClass,
-    as Object,
-    where { $_->isa('Spica::Parser') };
+class_type ParserClass, { class => 'Spica::Parser' };
 
 subtype ParserClassName,
     as Str;
