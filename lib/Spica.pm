@@ -105,7 +105,7 @@ sub fetch {
         port      => $self->port,
         path_base => $client->endpoint->{$endpoint_name}{path},
         requires  => $client->endpoint->{$endpoint_name}{requires},
-    )->create($param);
+    )->create(+{ $self->default_param => %$param });
 
     return $self->execute('GET', $uri_builder, $option);
 }
