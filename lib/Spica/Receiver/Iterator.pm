@@ -69,7 +69,7 @@ sub next {
         return $row;
     } else {
         return $self->{row_class}->new(
-            row_data       => $row,
+            data           => $row,
             spica          => $self->spica,
             client         => $self->client,
             client_name    => $self->client_name,
@@ -90,7 +90,7 @@ sub all {
             $results = [
                 map {
                     $self->row_class->new(
-                        row_data       => $_,
+                        data           => $_,
                         spica          => $self->spica,
                         client         => $self->client,
                         client_name    => $self->client_name,

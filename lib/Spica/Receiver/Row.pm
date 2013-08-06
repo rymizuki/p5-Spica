@@ -7,7 +7,7 @@ use Carp ();
 
 use Mouse;
 
-has row_data => (
+has data => (
     is      => 'ro',
     isa     => 'HashRef',
     default => sub { +{} },
@@ -16,7 +16,7 @@ has select_columns => (
     is      => 'ro',
     isa     => 'ArrayRef|Undef',
     default => sub {
-        return [keys %{ shift->row_data }],
+        return [keys %{ shift->data }],
     },
 );
 has spica => (
@@ -47,12 +47,12 @@ sub BUILD {
     $self->{_autoload_column_cache} = +{};
 
     if (@{ $self->client->column_settings }) {
-        $self->{row_data_origin} = $self->{row_data};
+        $self->{data_origin} = $self->{data};
 
         for my $column (@{ $self->client->column_settings }) {
             my $name = $column->{name};
             my $from = $column->{from};
-            $self->{row_data}{$name} = $self->{row_data_origin}{$from};
+            $self->{data}{$name} = $self->{data_origin}{$from};
         }
     }
 }
@@ -81,7 +81,7 @@ sub get {
     my ($self, $column) = @_;
 
     # "Untrusted" means the row is set_column by scalarref
-    if ($self->{_untrusted_row_data}{$column}) {
+    if ($self->{_untrusted_data}{$column}) {
         Carp::carp("${column}'s row data is untrusted. by your update query.");
     }
     my $cache = $self->{_get_column_cached};
@@ -110,11 +110,11 @@ sub get_column {
         Carp::croak('Please specify $column for first argument.');
     }
 
-    if (exists $self->{row_data}{$column}) {
+    if (exists $self->{data}{$column}) {
         if (exists $self->{_dirty_columns}{$column}) {
             return $self->{_dirty_columns}{$column};
         } else {
-            return $self->{row_data}{$column};
+            return $self->{data}{$column};
         }
     } else {
         Carp::croak("Specified column '${column}'");
@@ -134,12 +134,12 @@ sub get_columns {
 sub set_column {
     my ($self, $column, $value) = @_;
 
-    if (defined $self->{row_data}{$column} && defined $value && $self->{row_data}{$column} eq $value) {
+    if (defined $self->{data}{$column} && defined $value && $self->{data}{$column} eq $value) {
         return $value;
     }
 
     if (ref $value eq 'SCALAR') {
-        $self->{_untrusted_row_data}{$column} = 1;
+        $self->{_untrusted_data}{$column} = 1;
     }
 
     delete $self->{_get_column_cached}{$column};
