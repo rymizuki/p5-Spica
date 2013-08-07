@@ -97,18 +97,15 @@ sub client (&) {
 
     my $dest_class = caller();
 
-    no strict 'refs'; ## no critic;
-    no warnings 'once';
-    no warnings 'redefine';
-    local *{"${dest_class}::name"} = sub ($) {
+    my $_name = sub ($) {
         $client_name = shift;
         $row_class = row_namespace($client_name);
         $receiver = 'Spica::Receiver::Iterator';
     };
-    local *{"${dest_class}::columns"}   = sub (@)   { @client_columns = @_ };
-    local *{"${dest_class}::receiver"}  = sub ($)   { $receiver = shift };
-    local *{"${dest_class}::row_class"} = sub ($)   { $row_class = shift };
-    local *{"${dest_class}::endpoint"}  = sub ($$@) {
+    my $_columns = sub (@) { @client_columns = @_ };
+    my $_receiver = sub ($) { $receiver = $_[0] };
+    my $_row_class = sub ($) { $row_class = $_[0] };
+    my $_endpoint = sub ($$@) {
         my ($name, $path, $requires);
         if (@_ == 2) {
             $name = 'default';
@@ -121,24 +118,38 @@ sub client (&) {
             requires => $requires,
         };
     };
-    local *{"${dest_class}::inflate"}   = sub ($@)   {
+    my $_inflate = sub ($@) {
         my ($rule, $code) = @_;
         $rule = qr/^\Q$rule\E$/ if ref $rule ne 'Regexp';
         push @inflate => ($rule, $code);
     };
-    local *{"${dest_class}::deflate"}   = sub ($@)   {
+    my $_deflate = sub ($@) {
         my ($rule, $code) = @_;
         $rule = qr/^\Q$rule\E$/ if ref $rule ne 'Regexp';
         push @deflate => ($rule, $code);
     };
-    local *{"${dest_class}::trigger"} = sub ($@) {
+    my $_trigger = sub ($@) {
         my ($name, $code) = @_;
         push @{ ($trigger{$name} ||= []) } => $code;
     };
-    local *{"${dest_class}::filter"} = sub ($@) {
+    my $_filter = sub ($@) {
         my ($name, $code) = @_;
         push @{ ($filter{$name} ||= []) } => $code;
     };
+
+    no strict 'refs'; ## no critic;
+    no warnings 'once';
+    no warnings 'redefine';
+
+    local *{"${dest_class}::name"}      = $_name;
+    local *{"${dest_class}::columns"}   = $_columns;
+    local *{"${dest_class}::receiver"}  = $_receiver;
+    local *{"${dest_class}::row_class"} = $_row_class;
+    local *{"${dest_class}::endpoint"}  = $_endpoint;
+    local *{"${dest_class}::inflate"}   = $_inflate;
+    local *{"${dest_class}::deflate"}   = $_deflate;
+    local *{"${dest_class}::trigger"}   = $_trigger;
+    local *{"${dest_class}::filter"}    = $_filter;
 
     $code->();
 
