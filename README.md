@@ -6,32 +6,59 @@ This library is a development stage.
 # SYNOPSIS
 
 ```
-package MyClient::Schema;
-use Spica::Schema::Declare;
+package MyClient::Spec;
+use strict;
+use warnings;
+use Spica::Spec::Declare;
+
+client {
+    name 'users';
+    endpoint '/users' => [];
+    columns (
+        'id',
+        'name',
+    );
+};
 
 client {
     name 'profile';
-    endpoint '/profile', [qw(id)];
+    endpoint '/profile/{id}', [qw(id)];
     columns (
         'id',
         'name',
         'message',
         'created_at',
     );
+    receiver 'MyClient::Receiver::Row::Profile';
 }
 
 1;
 
- my $client = MyClient->new(
-     host         => 'example.com',
-     schema_class => 'MyClient::Schema',
- );
+package main;
+use strict;
+use warnings;
+use Spica;
 
- my $profile = $client->fetch('profile', +{id => $user_id});
 
- say $profile->name;
- 
- ```
+my $client = Spica->new(
+    host => 'example.com',
+    spec => 'MyClient::Spec',
+);
+
+my $users = $client->fetch('users', +{limit => 10});
+# GET http://example.com/users?limit=10
+
+while (my $user = $users->next) {
+  say $user->name;
+}
+
+
+my $profile = $client->fetch('profile', +{id => 10});
+# GET http://example.com/profile/10
+
+say $profile->name;
+
+```
 
 # DESCRIPTION
 
