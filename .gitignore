@@ -7,6 +7,8 @@
 /.carton/
 /local/
 
+carton.lock
+
 nytprof.out
 nytprof/
 
