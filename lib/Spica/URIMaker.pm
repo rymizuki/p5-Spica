@@ -1,7 +1,9 @@
-package Spica::URIBuilder;
+package Spica::URIMaker;
 use strict;
 use warnings;
 use utf8;
+
+use Clone qw(clone);
 
 use Mouse;
 
@@ -46,35 +48,25 @@ has uri => (
     is         => 'ro',
     isa        => 'URI',
     lazy_build => 1,
+    handles    => +{
+        as_string => 'as_string',
+    },
 );
 
 no Mouse;
 
-sub is_invalid_param {
-    my ($self, $param) = @_;
-    $param ||= +{};
-    return grep { !exists $param->{$_} || !defined $param->{$_} } @{ $self->{requires} };
-}
-
 sub create {
-    my ($self, $param) = @_;
+    my ($self, %args) = @_;
 
-    if (my @invalid_params = $self->is_invalid_param($param)) {
-        Carp::croak(sprintf("Invalid paramters. %s is required.", join(',' => @invalid_params)));
+    if (my @invalid_params = $self->is_invalid_param($args{param}, $args{requires})) {
+        Carp::croak(sprintf('Invalid parameters. %s is required.', join(', ' => @invalid_params)));
     }
 
-    $self->create_path($param);
-    $self->uri->path($self->path);
-    $self->uri->port($self->port)
-        if $self->port && $self->scheme ne 'https';
-
-    return $self;
+    $self->create_path($args{path_base}, $args{param});
 }
 
 sub create_path {
-    my ($self, $param) = @_;
-
-    my $path_base = $self->path_base;
+    my ($self, $path_base, $param) = @_;
 
     if ($path_base =~ /\{(?:[0-9a-zA-Z_]+)\}/) {
         for my $column (keys %$param) {
@@ -90,24 +82,39 @@ sub create_path {
     $self->{path}  = $path_base;
     $self->{param} = $param;
 
+    $self->uri->path($self->path);
+
     return $self;
 }
-
 
 sub create_query {
     my $self = shift;
 
     $self->uri->query_form($self->param);
-    $self;
+
+    return $self;
+}
+
+sub is_invalid_param {
+    my ($self, $param, $requires) = @_;
+    return grep { !exists $param->{$_} || !defined $param->{$_} } @$requires;
+}
+
+sub new_uri {
+    my $self = shift;
+    return clone $self;
 }
 
 sub _build_uri {
     my $self = shift;
-    if ($self->scheme && $self->host) {
-        return URI->new(sprintf '%s://%s', $self->scheme, $self->host);
-    } else {
-        return URI->new;
-    }
+    my $uri = ($self->scheme && $self->host)
+        ? URI->new(sprintf '%s://%s', $self->scheme, $self->host)
+        : URI->new
+        ;
+
+    $uri->port($self->port) if $self->port && $uri->scheme ne 'https';
+
+    return $uri;
 }
 
 1;

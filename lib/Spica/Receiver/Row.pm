@@ -25,7 +25,7 @@ has spica => (
 );
 has client => (
     is      => 'ro',
-    isa     => 'Spica::Spec::Client',
+    isa     => 'Spica::Client',
     lazy    => 1,
     default => sub {
         my $self = shift;

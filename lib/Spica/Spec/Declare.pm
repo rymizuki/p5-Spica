@@ -4,7 +4,7 @@ use warnings;
 use Exporter::Lite;
 
 use Spica::Spec;
-use Spica::Spec::Client;
+use Spica::Client;
 
 our @EXPORT = qw(
     spec 
@@ -107,16 +107,19 @@ sub client (&) {
     my $_row_class = sub ($) { $row_class = $_[0] };
     my $_endpoint = sub ($$@) {
         my ($name, $path, $requires);
-        if (@_ == 2) {
-            $name = 'default';
-            ($path, $requires) = @_;
+        if (@_ == 1) {
+            if (ref $_[0] && ref $_[0] eq 'HASH') {
+                $endpoint{$_[0]->{name}} = $_[0];
+            }
         } else {
-            ($name, $path, $requires) = @_;
+            if (@_ == 2) {
+                $name = 'default';
+                ($path, $requires) = @_;
+            } else {
+                ($name, $path, $requires) = @_;
+            }
+            $endpoint{$name} = +{method => 'GET', path => $path, requires => $requires};
         }
-        $endpoint{$name} = +{
-            path     => $path,
-            requires => $requires,
-        };
     };
     my $_inflate = sub ($@) {
         my ($rule, $code) = @_;
@@ -163,7 +166,7 @@ sub client (&) {
         push @col_names => $col_name;
     }
 
-    my $client = Spica::Spec::Client->new(
+    my $client = Spica::Client->new(
         columns         => \@col_names,
         column_settings => \@col_settings,
         name            => $client_name,

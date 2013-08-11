@@ -2,16 +2,17 @@ use Test::More;
 
 use_ok $_ for qw(
     Spica
+    Spica::Client
+    Spica::Filter
     Spica::Parser
     Spica::Parser::JSON
     Spica::Receiver::Iterator
     Spica::Receiver::Row
     Spica::Spec
-    Spica::Spec::Client
     Spica::Spec::Declare
-    Spica::URIBuilder
     Spica::Trigger
-    Spica::Filter
+    Spica::Types
+    Spica::URIMaker
 );
 
 done_testing;

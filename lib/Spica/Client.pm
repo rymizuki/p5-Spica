@@ -1,34 +1,39 @@
-package Spica::Spec::Client;
+package Spica::Client;
 use strict;
 use warnings;
 use utf8;
-use feature qw(state);
 
-use Carp ();
-use Class::Load ();
-use Data::Validator;
-
-use Spica::URIBuilder;
+use Spica::Filter qw(add_filter get_filter_code);
 use Spica::Trigger;
-use Spica::Filter;
+use Spica::URIMaker;
+
+use Class::Load ();
 
 use Mouse;
 
+# -------------------------------------------------------------------------
+# required args
+# -------------------------------------------------------------------------
+has endpoint => (
+    is       => 'ro',
+    isa      => 'HashRef',
+    required => 1,
+);
+
+# -------------------------------------------------------------------------
+# optional args
+# -------------------------------------------------------------------------
 has name => (
     is  => 'rw',
     isa => 'Str'
 );
 has columns => (
-    is  => 'rw',
-    isa => 'ArrayRef'
+    is       => 'rw',
+    isa      => 'ArrayRef'
 );
 has column_settings => (
-    is  => 'rw',
-    isa => 'ArrayRef',
-);
-has endpoint  => (
-    is      => 'rw',
-    isa     => 'HashRef',
+    is       => 'rw',
+    isa      => 'ArrayRef'
 );
 has deflators => (
     is      => 'ro',
@@ -42,11 +47,12 @@ has inflators => (
 );
 has row_class => (
     is  => 'rw',
-    isa => 'Str',
+    isa => 'Str|Undef',
 );
 has receiver => (
     is      => 'rw',
     isa     => 'Str',
+    default => 'Spica::Receiver::Iterator',
 );
 has base_row_class => (
     is      => 'rw',
@@ -126,6 +132,19 @@ sub call_inflate {
         }
     }
     return $col_value;
+}
+
+sub call_filter {
+    my ($self, $hookpoint_name, $spica, $target) = @_;
+    for my $code ($self->get_filter_code($hookpoint_name)) {
+        $target = $code->($self, $target);
+    }
+    return $target;
+}
+
+sub get_endpoint {
+    my ($self, $endpoint_name) = @_;
+    return $self->endpoint->{$endpoint_name};
 }
 
 1;
