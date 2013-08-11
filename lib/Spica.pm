@@ -16,6 +16,9 @@ use Furl;
 
 use Mouse;
 
+# -------------------------------------------------------------------------
+# fetcher's args
+# -------------------------------------------------------------------------
 has host => (
     is  => 'ro',
     isa => 'Str',
@@ -35,7 +38,6 @@ has agent => (
     lazy    => 1,
     default => "Spica $VERSION",
 );
-
 has default_param => (
     is         => 'ro',
     isa        => 'HashRef',
@@ -43,6 +45,9 @@ has default_param => (
     default    => sub { +{} },
 );
 
+# -------------------------------------------------------------------------
+# spica behavior's args
+# -------------------------------------------------------------------------
 has no_throw_http_exception => (
     is      => 'rw',
     isa     => 'Bool',
@@ -53,7 +58,6 @@ has is_suppress_object_creation => (
     isa     => 'Bool',
     default => 0,
 );
-
 has spec => (
     is      => 'ro',
     isa     => SpecClass,
@@ -61,7 +65,6 @@ has spec => (
     lazy    => 1,
     default => sub { ref $_[0] ? ref $_[0] : $_[0] . '::Spec' },
 );
-
 has parser => (
     is      => 'rw',
     isa     => ParserClass,
@@ -91,16 +94,50 @@ no Mouse;
 # $spica->fetch($client_name, $endpoint_name, $param);
 sub fetch {
     my $self        = shift;
-    my $client_name = shift;
 
-    my $client;
+    # get client
+    my $client_name = shift;
+    my $client = $self->get_client($client_name);
+
+    # parseing args
+    my ($endpoint_name, $param) = (ref $_[0] && ref $_[0] eq 'HASH' ? ('default', @_) : @_);
+
+    # get endpoint
+    my $endpoint = $client->get_endpoint($endpoint_name)
+        or Carp::croak("No such enpoint ${endpoint_name}.");
+    my $method = $endpoint->{method};
+
+    # init uri builder
+    my $builder = $self->uri_builder->new_uri->create(
+        path_base => $endpoint->{path},
+        requires  => $endpoint->{requires}, 
+        param     => +{ $self->default_param => %$param },
+    );
+    if ($method eq 'GET' || $method eq 'HEAD' || $method eq 'DELETE') {
+        # `content` is not available, I will grant `path_query`.
+        # make `path_query` and delete `content` params.
+        $builder->create_query;
+    }
+
+    # execute request
+    my $response = $self->_execute_request($client, $method, $builder);
+
+    # execute parseing
+    my $data = $self->_execute_parsing($client, $response);
+
+    # execute receive
+    return $self->_execute_receive($client, $data);
+}
+
+sub get_client {
+    my ($self, $client_name) = @_;
 
     if ($self->spec) {
-        $client = $self->spec->get_client($client_name)
+        return $self->spec->get_client($client_name)
             or Carp::croak("No such client ${client_name}.");
     } else {
         # XXX: Create client and endpoint.
-        $client = Spica::Client->new(
+        return Spica::Client->new(
             spica    => $self,
             endpoint => +{
                 method    => 'GET',
@@ -109,24 +146,10 @@ sub fetch {
             },
         );
     }
+}
 
-    my ($endpoint_name, $param) = (ref $_[0] && ref $_[0] eq 'HASH' ? ('default', @_) : @_);
-
-    my $endpoint = $client->get_endpoint($endpoint_name)
-        or Carp::croak("No such enpoint ${endpoint_name}.");
-    my $method = $endpoint->{method};
-
-    my $builder = $self->uri_builder->new_uri->create(
-        path_base => $endpoint->{path},
-        requires  => $endpoint->{requires}, 
-        param     => +{ $self->default_param => %$param },
-    );
-
-    if ($method eq 'GET' || $method eq 'HEAD' || $method eq 'DELETE') {
-        # `content` is not available, I will grant `path_query`.
-        # make `path_query` and delete `content` params.
-        $builder->create_query;
-    }
+sub _execute_request {
+    my ($self, $client, $method, $builder) = @_;
 
     {
         # hookpoint:
@@ -156,7 +179,16 @@ sub fetch {
         Carp::croak("Invalid response. code is '@{[$response->status]}'");
     }
 
-    my $data = $self->parser->parse($response->content);
+    return $response;
+}
+
+sub _execute_parsing {
+    my ($self, $client, $response) = @_;
+    return $self->parser->parse($response->content);
+}
+
+sub _execute_receive {
+    my ($self, $client, $data) = @_;
 
     if ($self->is_suppress_object_creation) {
         return $data;
@@ -182,6 +214,9 @@ sub fetch {
     }
 }
 
+# -------------------------------------------------------------------------
+# builders
+# -------------------------------------------------------------------------
 sub _build_uri_builder {
     my $self = shift;
     return Spica::URIMaker->new(
