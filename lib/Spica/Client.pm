@@ -29,11 +29,13 @@ has name => (
 );
 has columns => (
     is       => 'rw',
-    isa      => 'ArrayRef'
+    isa      => 'ArrayRef',
+    default  => sub { [] },
 );
 has column_settings => (
-    is       => 'rw',
-    isa      => 'ArrayRef'
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [] },
 );
 has deflators => (
     is      => 'ro',
@@ -47,7 +49,7 @@ has inflators => (
 );
 has row_class => (
     is  => 'rw',
-    isa => 'Str|Undef',
+    isa => 'Str',
 );
 has receiver => (
     is      => 'rw',
@@ -55,7 +57,7 @@ has receiver => (
     default => 'Spica::Receiver::Iterator',
 );
 has base_row_class => (
-    is      => 'rw',
+    is      => 'ro',
     isa     => 'Str',
     default => 'Spica::Receiver::Row',
 );
@@ -64,7 +66,7 @@ sub BUILD {
     my $self = shift;
 
     # load row class
-    my $row_class = $self->row_class;
+    my $row_class = $self->row_class || $self->base_row_class;
     Class::Load::load_optional_class($row_class) or do {
         # make row class automatically
         Class::Load::load_class($self->base_row_class);

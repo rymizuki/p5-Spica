@@ -59,11 +59,10 @@ has is_suppress_object_creation => (
     default => 0,
 );
 has spec => (
-    is      => 'ro',
-    isa     => SpecClass,
-    coerce  => 1,
-    lazy    => 1,
-    default => sub { ref $_[0] ? ref $_[0] : $_[0] . '::Spec' },
+    is        => 'ro',
+    isa       => SpecClass,
+    coerce    => 1,
+    predicate => 'has_spec',
 );
 has parser => (
     is      => 'rw',
@@ -132,17 +131,19 @@ sub fetch {
 sub get_client {
     my ($self, $client_name) = @_;
 
-    if ($self->spec) {
+    if ($self->has_spec) {
         return $self->spec->get_client($client_name)
             or Carp::croak("No such client ${client_name}.");
     } else {
         # XXX: Create client and endpoint.
         return Spica::Client->new(
-            spica    => $self,
+            name     => 'default',
             endpoint => +{
-                method    => 'GET',
-                path_base => $client_name,
-                requires  => [],
+                'default' => +{
+                    method   => 'GET',
+                    path     => $client_name,
+                    requires => [],
+                },
             },
         );
     }

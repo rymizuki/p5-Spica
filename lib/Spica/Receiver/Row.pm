@@ -14,7 +14,7 @@ has data => (
 );
 has select_columns => (
     is      => 'ro',
-    isa     => 'ArrayRef|Undef',
+    isa     => 'ArrayRef',
     default => sub {
         return [keys %{ shift->data }],
     },

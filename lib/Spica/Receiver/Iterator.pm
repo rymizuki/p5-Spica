@@ -73,7 +73,7 @@ sub next {
             spica          => $self->spica,
             client         => $self->client,
             client_name    => $self->client_name,
-            select_columns => $self->{select_columns},
+            select_columns => $self->{select_columns} || [],
         );
     }
 }
@@ -94,7 +94,7 @@ sub all {
                         spica          => $self->spica,
                         client         => $self->client,
                         client_name    => $self->client_name,
-                        select_columns => $self->{select_columns},
+                        select_columns => $self->{select_columns} || [],
                     )
                 } @$results
             ];
