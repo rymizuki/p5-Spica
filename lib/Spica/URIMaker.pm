@@ -46,6 +46,11 @@ has param => (
     default => sub { +{} },
 );
 
+has content => (
+    is  => 'rw',
+    isa => 'Str',
+);
+
 has uri => (
     is         => 'ro',
     isa        => 'URI',

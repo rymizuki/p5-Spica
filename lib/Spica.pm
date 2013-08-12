@@ -163,7 +163,7 @@ sub _execute_request {
     my $response = $self->fetcher->request(
         method  => $method,
         url     => $builder->as_string,
-        content => $builder->param,
+        content => $builder->content || $builder->param,
         headers => [], # TODO: custom any header use.
     );
 
