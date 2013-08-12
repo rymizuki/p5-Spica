@@ -4,12 +4,14 @@ use warnings;
 use utf8;
 
 use Clone qw(clone);
+use URI;
 
 use Mouse;
 
 has scheme => (
-    is  => 'ro',
-    isa => 'Str',
+    is      => 'ro',
+    isa     => 'Str',
+    default => 'http',
 );
 
 has host => (
@@ -39,8 +41,8 @@ has requires => (
 );
 
 has param => (
-    is => 'ro',
-    isa => 'HashRef',
+    is      => 'rw',
+    isa     => 'HashRef',
     default => sub { +{} },
 );
 
@@ -63,10 +65,16 @@ sub create {
     }
 
     $self->create_path($args{path_base}, $args{param});
+    $self;
 }
 
 sub create_path {
     my ($self, $path_base, $param) = @_;
+
+    if (!$path_base) {
+        Carp::croak("Invalid args `path_base`.");
+    }
+    $param ||= +{};
 
     if ($path_base =~ /\{(?:[0-9a-zA-Z_]+)\}/) {
         for my $column (keys %$param) {
@@ -97,7 +105,7 @@ sub create_query {
 
 sub is_invalid_param {
     my ($self, $param, $requires) = @_;
-    return grep { !exists $param->{$_} || !defined $param->{$_} } @$requires;
+    return grep { !exists $param->{$_} || !defined $param->{$_} } @{ $requires || [] };
 }
 
 sub new_uri {
