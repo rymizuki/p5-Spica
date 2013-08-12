@@ -4,7 +4,7 @@ use warnings;
 use Exporter::Lite;
 
 use Spica::Spec;
-use Spica::Spec::Client;
+use Spica::Client;
 
 our @EXPORT = qw(
     spec 
@@ -106,15 +106,22 @@ sub client (&) {
     my $_receiver = sub ($) { $receiver = $_[0] };
     my $_row_class = sub ($) { $row_class = $_[0] };
     my $_endpoint = sub ($$@) {
-        my ($name, $path, $requires);
-        if (@_ == 2) {
-            $name = 'default';
-            ($path, $requires) = @_;
+        my $name = shift;
+        my ($method, $path_base, $requires) = @_;
+        if (@_ == 1) {
+            $method    = $_[0]{method};
+            $path_base = $_[0]{path};
+            $requires  = $_[0]{requires};
         } else {
-            ($name, $path, $requires) = @_;
+            $method = 'GET';
+            ($path_base, $requires) = @_;
+        }
+        if (!$method or !$path_base or !$requires) {
+            Carp::croak('Invalid args endpoint.');
         }
         $endpoint{$name} = +{
-            path     => $path,
+            method   => $method,
+            path     => $path_base,
             requires => $requires,
         };
     };
@@ -163,7 +170,7 @@ sub client (&) {
         push @col_names => $col_name;
     }
 
-    my $client = Spica::Spec::Client->new(
+    my $client = Spica::Client->new(
         columns         => \@col_names,
         column_settings => \@col_settings,
         name            => $client_name,

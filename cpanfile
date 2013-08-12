@@ -1,6 +1,7 @@
 requires 'perl'            => '5.10.0';
 requires 'Carp'            => '1.08';
 requires 'Class::Load'     => '0.06';
+requires 'Clone'           => '0.28';
 requires 'Data::Validator' => '0.09';
 requires 'URI'             => '1.40';
 requires 'Mouse'           => '0.93';

@@ -14,7 +14,7 @@ has data => (
 );
 has select_columns => (
     is      => 'ro',
-    isa     => 'ArrayRef|Undef',
+    isa     => 'ArrayRef',
     default => sub {
         return [keys %{ shift->data }],
     },
@@ -25,7 +25,7 @@ has spica => (
 );
 has client => (
     is      => 'ro',
-    isa     => 'Spica::Spec::Client',
+    isa     => 'Spica::Client',
     lazy    => 1,
     default => sub {
         my $self = shift;
