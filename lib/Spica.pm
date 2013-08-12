@@ -155,7 +155,7 @@ sub _execute_request {
         # hookpoint:
         #   name: `before_request`
         #   args: ($client isa 'Spica::Client', $builder isa `Spica::URIMaker`)
-        $client->call_trigger('after_request' => ($self, $builder));
+        $client->call_trigger('before_request' => ($self, $builder));
         $builder = $client->call_filter('before_request' => ($self, $builder));
     }
 
@@ -171,7 +171,7 @@ sub _execute_request {
         #   name: `after_request`
         #   args: ($client isa 'Spica::Client', $response isa `Furl::Response`)
         $client->call_trigger('after_request' => ($self, $response));
-        $response = $client->call_filter('before_receive' => ($self, $response));
+        $response = $client->call_filter('after_request' => ($self, $response));
     }
 
     if (!$response->is_success && !$self->no_throw_http_exception) {
