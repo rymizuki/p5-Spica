@@ -44,6 +44,11 @@ has default_param => (
     auto_deref => 1,
     default    => sub { +{} },
 );
+has default_headers => (
+    is      => 'ro',
+    isa     => 'ArrayRef',
+    default => sub { [] },
+);
 
 # -------------------------------------------------------------------------
 # spica behavior's args
@@ -164,7 +169,7 @@ sub _execute_request {
         method  => $method,
         url     => $builder->as_string,
         content => $builder->content || $builder->param,
-        headers => [], # TODO: custom any header use.
+        headers => $self->default_headers, # TODO: custom any header use.
     );
 
     {
