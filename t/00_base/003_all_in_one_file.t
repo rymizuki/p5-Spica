@@ -22,7 +22,7 @@ my $api = run_http_server {
 
     client {
         name 'mock_basic';
-        endpoint '/' => [];
+        endpoint 'default' => '/' => [];
         columns qw(
             result
             message

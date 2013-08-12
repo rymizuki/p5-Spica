@@ -10,7 +10,7 @@ use Spica;
 
     client {
         name 'mock_basic_row';
-        endpoint '/' => [];
+        endpoint 'default' => '/' => [];
         columns qw(
             id
             name
@@ -19,7 +19,7 @@ use Spica;
 
     client {
         name 'mock_basic_row_foo';
-        endpoint '/foo' => []; 
+        endpoint 'default' => '/foo' => []; 
         columns qw(
             id
             name

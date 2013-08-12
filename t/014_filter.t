@@ -10,7 +10,7 @@ use Spica;
 
     client {
         name 'before_request';
-        endpoint '/' => [];
+        endpoint 'default' => '/' => [];
         columns ();
         filter 'before_request' => sub {
             my ($spica, $builder) = @_;
@@ -22,7 +22,7 @@ use Spica;
 
     client {
         name 'after_request';
-        endpoint '/' => [];
+        endpoint 'default' => '/' => [];
         columns ();
         filter 'after_request' => sub {
             my ($spica, $response) = @_;
@@ -36,7 +36,7 @@ use Spica;
 
     client {
         name 'before_receive';
-        endpoint '/before_receive' => [];
+        endpoint 'default' => '/before_receive' => [];
         columns ();
         filter 'before_receive' => sub {
             my ($spica, $data) = @_;
