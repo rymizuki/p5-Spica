@@ -106,20 +106,24 @@ sub client (&) {
     my $_receiver = sub ($) { $receiver = $_[0] };
     my $_row_class = sub ($) { $row_class = $_[0] };
     my $_endpoint = sub ($$@) {
-        my ($name, $path, $requires);
+        my $name = shift;
+        my ($method, $path_base, $requires) = @_;
         if (@_ == 1) {
-            if (ref $_[0] && ref $_[0] eq 'HASH') {
-                $endpoint{$_[0]->{name}} = $_[0];
-            }
+            $method    = $_[0]{method};
+            $path_base = $_[0]{path};
+            $requires  = $_[0]{requires};
         } else {
-            if (@_ == 2) {
-                $name = 'default';
-                ($path, $requires) = @_;
-            } else {
-                ($name, $path, $requires) = @_;
-            }
-            $endpoint{$name} = +{method => 'GET', path => $path, requires => $requires};
+            $method = 'GET';
+            ($path_base, $requires) = @_;
         }
+        if (!$method or !$path_base or !$requires) {
+            Carp::croak('Invalid args endpoint.');
+        }
+        $endpoint{$name} = +{
+            method   => $method,
+            path     => $path_base,
+            requires => $requires,
+        };
     };
     my $_inflate = sub ($@) {
         my ($rule, $code) = @_;
