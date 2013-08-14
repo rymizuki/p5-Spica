@@ -70,6 +70,31 @@ sub _current_spec {
     return $spec_class->instance;
 }
 
+sub _generate_filter_init_builder {
+    my (@attributes) = @_;
+
+    return sub {
+        my ($spica, $builder) = @_;
+        my %param =  map { $_->{origin} => $builder->param->{$_->{name}} }
+                    grep { exists $builder->param->{$_->{name}} }
+                    @attributes;
+        $builder->param(\%param);
+        return $builder;
+    };
+}
+
+sub _generate_filter_init_row_class {
+    my (@attributes) = @_;
+
+    return sub {
+        my ($spica, $data) = @_;
+        my %data = map  { $_->{name} => $data->{$_->{origin}} }
+                   grep { $_->{row_accessor} }
+                   @attributes;
+        return \%data;
+    };
+}
+
 sub columns (@);
 sub name ($);
 sub endpoint ($$@);
@@ -160,25 +185,33 @@ sub client (&) {
 
     $code->();
 
-    my (@col_names, @col_settings);
+    my (@accessor_names, @attributes);
     while (@client_columns) {
-        my $col_name = shift @client_columns;
-        if (ref $col_name) {
-            push @col_settings => $col_name;
-            $col_name = $col_name->{name};
-        }
-        push @col_names => $col_name;
+        my $column_name = shift @client_columns;
+        my $option = ref $client_columns[0] ? shift @client_columns : +{
+            # default generating accessor
+            row_accessor => 1,
+        };
+
+        push @accessor_names => $column_name if $option->{row_accessor};
+        push @attributes => +{
+            name         => $column_name,
+            origin       => ($option->{from} || $column_name),
+            row_accessor => $option->{row_accessor},
+        };
     }
 
+    push @{ $filter{init_builder}   } => _generate_filter_init_builder   @attributes;
+    push @{ $filter{init_row_class} } => _generate_filter_init_row_class @attributes;
+
     my $client = Spica::Client->new(
-        columns         => \@col_names,
-        column_settings => \@col_settings,
-        name            => $client_name,
-        endpoint        => \%endpoint,
-        inflators       => \@inflate,
-        deflators       => \@deflate,
-        receiver        => $receiver,
-        row_class       => $row_class,
+        columns   => \@accessor_names,
+        name      => $client_name,
+        endpoint  => \%endpoint,
+        inflators => \@inflate,
+        deflators => \@deflate,
+        receiver  => $receiver,
+        row_class => $row_class,
         ($current->{__base_row_class} ? (base_row_class => $current->{__base_row_class}) : ()),
     );
 

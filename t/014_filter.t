@@ -11,7 +11,10 @@ use Spica;
     client {
         name 'before_request';
         endpoint 'default' => '/' => [];
-        columns ();
+        columns (
+            'result',
+            'message',
+        );
         filter 'before_request' => sub {
             my ($spica, $builder) = @_;
             # XXX: pathの書き換え SEE ALSO Spica::URIMaker
@@ -23,7 +26,10 @@ use Spica;
     client {
         name 'after_request';
         endpoint 'default' => '/' => [];
-        columns ();
+        columns (
+            'result',
+            'message',
+        );
         filter 'after_request' => sub {
             my ($spica, $response) = @_;
             if ($response->status == 404) {
@@ -37,7 +43,10 @@ use Spica;
     client {
         name 'before_receive';
         endpoint 'default' => '/before_receive' => [];
-        columns ();
+        columns (
+            'result',
+            'message',
+        );
         filter 'before_receive' => sub {
             my ($spica, $data) = @_;
             return [$data];

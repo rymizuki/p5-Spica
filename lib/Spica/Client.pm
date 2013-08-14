@@ -32,11 +32,6 @@ has columns => (
     isa      => 'ArrayRef',
     default  => sub { [] },
 );
-has column_settings => (
-    is      => 'rw',
-    isa     => 'ArrayRef',
-    default => sub { [] },
-);
 has deflators => (
     is      => 'ro',
     isa     => 'ArrayRef',

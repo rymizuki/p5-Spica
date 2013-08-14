@@ -117,6 +117,15 @@ sub fetch {
         requires  => $endpoint->{requires}, 
         param     => +{ $self->default_param => %$param },
     );
+
+    {
+        # hookpoint:
+        #   name: `init_builder`
+        #   args: ($client isa 'Spica::Client', $builder isa `Spica::URIMaker`)
+        $client->call_trigger('init_builder' => ($self, $builder));
+        $builder = $client->call_filter('init_builder' => ($self, $builder));
+    }
+
     if ($method eq 'GET' || $method eq 'HEAD' || $method eq 'DELETE') {
         # `content` is not available, I will grant `path_query`.
         # make `path_query` and delete `content` params.

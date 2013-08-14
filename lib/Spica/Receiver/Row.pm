@@ -46,15 +46,10 @@ sub BUILD {
     $self->{_dirty_columns} = +{};
     $self->{_autoload_column_cache} = +{};
 
-    if (@{ $self->client->column_settings }) {
-        $self->{data_origin} = $self->{data};
-
-        for my $column (@{ $self->client->column_settings }) {
-            my $name = $column->{name};
-            my $from = $column->{from};
-            $self->{data}{$name} = $self->{data_origin}{$from};
-        }
-    }
+    # hookpoint:
+    #   name: `init_row_class`
+    #   args: ($spica isa 'Spica', $data isa `HashRef`)
+    $self->{data} = $self->client->call_filter(init_row_class => ($self->spica, $self->{data}));
 }
 
 no Mouse;
