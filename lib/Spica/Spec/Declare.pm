@@ -89,7 +89,7 @@ sub _generate_filter_init_row_class {
     return sub {
         my ($spica, $data) = @_;
         my %data = map  { $_->{name} => $data->{$_->{origin}} }
-                   grep { $_->{row_accessor} }
+                   grep { !$_->{no_row_accessor} }
                    @attributes;
         return \%data;
     };
@@ -188,16 +188,13 @@ sub client (&) {
     my (@accessor_names, @attributes);
     while (@client_columns) {
         my $column_name = shift @client_columns;
-        my $option = ref $client_columns[0] ? shift @client_columns : +{
-            # default generating accessor
-            row_accessor => 1,
-        };
+        my $option = ref $client_columns[0] ? shift @client_columns : +{};
 
-        push @accessor_names => $column_name if $option->{row_accessor};
+        push @accessor_names => $column_name if !$option->{no_row_accessor};
         push @attributes => +{
-            name         => $column_name,
-            origin       => ($option->{from} || $column_name),
-            row_accessor => $option->{row_accessor},
+            name   => $column_name,
+            origin => ($option->{from} || $column_name),
+            no_row_accessor => $option->{no_row_accessor},
         };
     }
 
