@@ -133,13 +133,13 @@ sub fetch {
     }
 
     # execute request
-    my $response = $self->_execute_request($client, $method, $builder);
+    my $response = $self->execute_request($client, $method, $builder);
 
     # execute parseing
-    my $data = $self->_execute_parsing($client, $response);
+    my $data = $self->execute_parsing($client, $response);
 
     # execute receive
-    return $self->_execute_receive($client, $data);
+    return $self->execute_receive($client, $data);
 }
 
 sub get_client {
@@ -163,7 +163,7 @@ sub get_client {
     }
 }
 
-sub _execute_request {
+sub execute_request {
     my ($self, $client, $method, $builder) = @_;
 
     {
@@ -197,12 +197,12 @@ sub _execute_request {
     return $response;
 }
 
-sub _execute_parsing {
+sub execute_parsing {
     my ($self, $client, $response) = @_;
     return $self->parser->parse($response->content);
 }
 
-sub _execute_receive {
+sub execute_receive {
     my ($self, $client, $data) = @_;
 
     if ($self->is_suppress_object_creation) {
