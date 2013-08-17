@@ -2,7 +2,7 @@ package Spica;
 use strict;
 use warnings;
 use utf8;
-our $VERSION = '0.02';
+our $VERSION = '0.01';
 
 use Spica::Client;
 use Spica::Receiver::Iterator;
@@ -249,3 +249,226 @@ sub _build_fetcher {
 }
 
 1;
+__END__
+
+=pod
+
+=encoding utf-8
+
+=head1 NAME
+
+Spica - the HTTP client for dealing with complex WEB API.
+
+=head1 SYNOPSIS
+
+    my $spica = Spica->new(
+        host => 'example.com',
+        spec => 'Example::Spec',
+    );
+
+    my $iterator = $spica->fetch(client => 'list' => +{key => $value});
+
+=head1 DESCRIPTION
+
+Spica provides an interface to common WEB API many. It is the HTTP Client that combines the flexibility and scalability of a O/R Mapper and Model of Backbone.js. 
+
+=head1 SIMPLEST CASE
+
+create Spica's instance. arguments `host` must be required. fetch returned object is  `Spica::Receiver::Iterator`.
+
+    my $spica = Spica->new(
+        host => 'example.com'
+    );
+
+    my $iterator = $spica->fetch('/users', +{
+        rows => 20,
+    });
+
+=head1 THE BASIC USAGE
+
+create `Specifiction` class.
+see Spica::Spec for docs on  defining spec class.
+
+    package Your::API::Spec;
+    use Spica::Spec::Declare;
+
+    client {
+        name 'example';
+        endpoint list => '/users' => [];
+        columns qw( id name message );
+    };
+
+    1;
+
+in your script.
+
+    use Spica;
+
+    my $spica = Spica->new(
+        host => 'example.com',
+        spec => 'Your::API::Spec',
+    );
+
+    # fetching WEB API.
+    my $iterator = $spca->fetch('example', 'list', +{});
+
+    while (my $user = $iterator->next) {
+        say $user->name;
+    }
+
+=head1 ARCHITECTURE
+
+Spica iclasses are comprised of following distinct components:
+
+=head2 CLIENT
+
+C<client> is a class with information about how to receipt of the request parameter data for WEB API.
+C<client> uses C<Spica::Spec::Iterator> the receipt of data and GET request as the initial value, but I can cope with a wide range of API specification by extending in C<spec>.
+
+=head2 SPEC
+
+The C<spec> is a simple class that describes specifictions of the WEB API.
+C<spec> is a simple class that describes the specifications of the WEB API. You can extend the C<client> by changing the C<receiver> class you can specify the HTTP request other than GET request.
+
+    package Your::Spec;
+    use Spica::Spec::Declare;
+
+    client {
+        name 'example';
+        endpoint 'name1', '/path/to', [qw(column1 column2)];
+        endpoint 'name2', '/path/to/{replace}, [qw(replace_column column)];
+        endpoint 'name3', +{
+            method   => 'POST',
+            path     => '/path/to',
+            requires => [qw(column1 column2)],
+        };
+        columns qw(
+            column1
+            column2
+        );
+    }
+
+    ... and other clients ...
+
+=head2 PARSER
+
+C<parser> is a class for to be converted to a format that can be handled in Perl format that the API provides.
+You can use an API of its own format if you extend the C<Spica::Parser>
+
+    package Your::Parser;
+    use parent qw(Spica::Parser);
+
+    use Data::MessagePack;
+
+    sub parser {
+        my $self = shift;
+        return $self->{parser} ||= Data::MessagePack->new;
+    }
+
+    sub parse {
+        my ($self, $body) = @_;
+        return $self->parser->unpack($body);
+    }
+
+    1;
+
+in your script
+
+    my $spica = Spica->new(%args);
+
+    $spica->parser('Your::Parser');
+
+=head2 RECEIVER
+
+C<receiver> is a class for easier handling more data received from the WEB API.
+C<receiver> This contains the C<Spica::Receiver::Row> and C<Spica::Receiver::Iterator>.
+
+=head1 METHODS
+
+Spica provides a number of methods to all your classes, 
+
+
+=head2 $spica = Spica->new(%args)
+
+Creates a new Spica instance.
+
+    my $spica = Spica->new(
+        host => 'example.com',
+        spec => 'Your::Spec',
+    );
+
+Arguments can be:
+
+=over
+
+=item C<scheme>
+
+This is the URI scheme of WEB API.
+By default, C<http> is used.
+
+=item C<host> :Str
+
+This is the URI hostname of WEB API.
+This argument is always required.
+
+=item C<port> :Int
+
+This is the URI port of WEB API.
+By default, C<80> is used.
+
+=item C<agent> :Str
+
+This is the Fetcher agent name of Spica.
+By default, C<Spica $VERSION> is used.
+
+=item C<default_param> :HashRef
+
+You can specify the parameters common to request the WEB API.
+
+=item C<default_headers> :ArrayRef
+
+You can specify the headers common to request the WEB API.
+
+=item C<spec>
+
+C<spec> expecs the name of the class that inherits C<Spiac::Spec>.
+By default, C<spec> is not used.
+
+=item C<parser>
+
+C<parser> expects the name of the class that inherits C<Spica::Parser>.
+By default, C<Spica::Parser::JSON> is used.
+
+=item C<is_suppress_object_creation>
+
+Specifies the receiver object creation mode. By default this value is C<false>.
+If you specifies this to a C<true> value, no row object will be created when
+a receive on WEB API results.
+
+=item C<no_throw_http_exception>
+
+Specifies the mode that does not throw the exception of HTTP. 
+by default this value is C<false>.
+
+=back
+
+=head2 $iterator = $spica->fetch($clien_name, $endpoint_name, \%param);
+
+
+
+=head1 AUTHORS
+
+Ryo Iinuma C<< <ry.mizuki __at__ gmail.com> >>
+
+=head1 REPOSITORY
+
+    git clone git@github.com:rymizuki/p5-Spica.git
+
+=head1 LICENCE AND COPYRIGHT
+
+Copyright (c) 2013, the Spica L</AUTHOR>. All rights reserved.
+
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself. See L<perlartistic>.
+
+=cut
