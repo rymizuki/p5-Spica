@@ -1,10 +1,10 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "the HTTP client for dealing with complex WEB API.",
    "author" : [
-      "mizuki_r <ry.mizuki@gmail.com>"
+      "Ryo Iinuma C<< <ry.mizuki __at__ gmail.com> >>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v0.5.6, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Minilla/v0.6.0, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -42,15 +42,42 @@
       },
       "runtime" : {
          "requires" : {
-            "perl" : "5.008005"
+            "Carp" : "1.08",
+            "Class::Load" : "0.06",
+            "Clone" : "0.28",
+            "Data::Validator" : "0.09",
+            "Exporter::Lite" : "0.02",
+            "Furl" : "0.20",
+            "JSON" : "2.15",
+            "Mouse" : "0.93",
+            "MouseX::Types" : "0.01",
+            "Scalar::Util" : "0",
+            "URI" : "1.40",
+            "XML::Simple" : "0",
+            "perl" : "v5.10.0"
          }
       },
       "test" : {
          "requires" : {
+            "Test::Fake::HTTPD" : "0",
             "Test::More" : "0.98"
          }
       }
    },
    "release_status" : "unstable",
-   "version" : "0.01"
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/rymizuki/p5-Spica/issues"
+      },
+      "homepage" : "https://github.com/rymizuki/p5-Spica",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/rymizuki/p5-Spica.git",
+         "web" : "https://github.com/rymizuki/p5-Spica"
+      }
+   },
+   "version" : "0.01",
+   "x_contributors" : [
+      "mizuki_r <ry.mizuki@gmail.com>"
+   ]
 }
