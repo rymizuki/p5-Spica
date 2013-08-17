@@ -1,7 +1,6 @@
 use Test::More;
-use Test::Requires
-    'Test::Fake::HTTPD',
-    'HTTP::Request';
+use Test::Fake::HTTPD;
+use HTTP::Request;
 
 use Spica;
 
