@@ -43,7 +43,6 @@ sub BUILD {
     # inflated values
     $self->{_get_column_cached} = +{};
     # values will be updated
-    $self->{_dirty_columns} = +{};
     $self->{_autoload_column_cache} = +{};
 
     # hookpoint:
@@ -61,9 +60,6 @@ sub generate_column_accessor {
 
     return sub {
         my $self = shift;
-
-        # setter is alias of set_column (not deflate column) for historical reason
-        return $self->set_column($column => @_) if @_;
 
         # getter is alias of get (inflate column)
         return $self->get($column);
@@ -91,13 +87,6 @@ sub get {
     return $data;
 }
 
-sub set {
-    my ($self, $column, $value) = @_;
-    $self->set_column($column => $self->client->call_deflate($column, $value));
-    delete $self->{_get_column_cached}{$column};
-    return $self;
-}
-
 sub get_column {
     my ($self, $column) = @_;
 
@@ -106,11 +95,7 @@ sub get_column {
     }
 
     if (exists $self->{data}{$column}) {
-        if (exists $self->{_dirty_columns}{$column}) {
-            return $self->{_dirty_columns}{$column};
-        } else {
-            return $self->{data}{$column};
-        }
+        return $self->{data}{$column};
     } else {
         Carp::croak("Specified column '${column}'");
     }
@@ -124,38 +109,6 @@ sub get_columns {
         $data{$column} = $self->get_column($column);
     }
     return \%data;
-}
-
-sub set_column {
-    my ($self, $column, $value) = @_;
-
-    if (defined $self->{data}{$column} && defined $value && $self->{data}{$column} eq $value) {
-        return $value;
-    }
-
-    if (ref $value eq 'SCALAR') {
-        $self->{_untrusted_data}{$column} = 1;
-    }
-
-    delete $self->{_get_column_cached}{$column};
-    $self->{_dirty_columns}{$column} = $value;
-
-    return $value;
-}
-
-sub set_columns {
-    my ($self, $args) = @_;
-
-    for my $column (keys %$args) {
-        $self->set_column($column => $args->{$column});
-    }
-}
-
-sub get_dirty_columns {
-    my $self = shift;
-    return +{
-        %{ $self->{_dirty_columns} },
-    };
 }
 
 # for +columns option by some search methods
