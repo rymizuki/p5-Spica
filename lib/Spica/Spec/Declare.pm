@@ -88,7 +88,7 @@ sub _generate_filter_init_row_class {
 
     return sub {
         my ($spica, $data) = @_;
-        my %data = map  { $_->{name} => $data->{$_->{origin}} }
+        my %data =  map { $_->{name} => $data->{$_->{origin}} }
                    grep { !$_->{no_row_accessor} }
                    @attributes;
         return \%data;
