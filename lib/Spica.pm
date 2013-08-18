@@ -97,7 +97,7 @@ no Mouse;
 # $spica->fetch($client_name, $param);
 # $spica->fetch($client_name, $endpoint_name, $param);
 sub fetch {
-    my $self        = shift;
+    my $self = shift;
 
     # get client
     my $client_name = shift;
