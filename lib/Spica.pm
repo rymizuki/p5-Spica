@@ -149,7 +149,7 @@ sub get_client {
         return $self->spec->get_client($client_name)
             or Carp::croak("No such client ${client_name}.");
     } else {
-        # XXX: Create client and endpoint.
+        # Create client and endpoint.
         return Spica::Client->new(
             name     => 'default',
             endpoint => +{
