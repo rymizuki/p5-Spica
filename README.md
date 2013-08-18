@@ -17,7 +17,7 @@ Spica provides an interface to common WEB API many. It is the HTTP Client that c
 
 # SIMPLEST CASE
 
-create Spica's instance. arguments \`host\` must be required. fetch returned object is  \`Spica::Receiver::Iterator\`.
+create Spica's instance. arguments `host` must be required. fetch returned object is  `Spica::Receiver::Iterator`.
 
     my $spica = Spica->new(
         host => 'example.com'
@@ -29,8 +29,8 @@ create Spica's instance. arguments \`host\` must be required. fetch returned obj
 
 # THE BASIC USAGE
 
-create \`Specifiction\` class.
-see Spica::Spec for docs on  defining spec class.
+create specifiction class.
+see `Spica::Spec` for docs on defining spec class.
 
     package Your::API::Spec;
     use Spica::Spec::Declare;
@@ -192,11 +192,46 @@ Arguments can be:
     Specifies the mode that does not throw the exception of HTTP. 
     by default this value is `false`.
 
-## $iterator = $spica->fetch($clien\_name, $endpoint\_name, \\%param);
+## $iterator = $spica->fetch(@args);
 
+Request to the WEB API, to build the object.
+I have the interface of the following three:
 
+### $spica->fetch($client\_name, $endpoint\_name, $param)
 
+It is the access method basic.
 
+Arguments can be:
+
+- `client_name` : Str
+
+    Enter the name of the client that you have defined in `spec`.
+
+- `endpoint_name` : Str
+
+    Enter the name of `endpoint` that is defined in the `client`.
+
+- `param` : HashRef
+
+    Specified in `HashRef` the content and query parameters required to request. I will specify the HashRef empty if there are no parameters.
+
+### $spica->fetch($client\_name, $param)
+
+You can omit the `endpoint_name` of `fetch` If you specify a string of `default` to `name` of <endpoint>.
+
+Arguments can be:
+
+- `client_name` : Str
+- `param` : HashRef
+
+### $spica->fetch($path, $param)
+
+You can request by specifying to fetch the <path> If you do not specify the `spec`.
+
+Arguments can be:
+
+- `path` : Str
+- `param` : HashRef
 
 # AUTHORS
 
