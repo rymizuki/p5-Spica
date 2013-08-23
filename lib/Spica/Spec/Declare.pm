@@ -223,3 +223,133 @@ sub client (&) {
 }
 
 1;
+__END__
+
+=encoding utf-8
+
+=head1 NAME
+
+Spica::Spec::Declare
+
+=head1 SYNOPSIS
+
+    package Your::Spec;
+    use Spica::Spec::Declare;
+
+    client {
+        name 'example';
+        endpoint 'search' => '/examples' => [qw(access_token)];
+        columns (
+            'access_token' => +{from => 'accessToken', no_row_accessor => 1},
+            'id'           => +{from => 'exampleId'},
+            'name'         => +{from => 'exampleName'},
+            'status',
+        );
+    };
+
+=head1 DESCRIPTIOM
+
+=head1 FUNCTIONS
+
+=head2 client(\&callback)
+
+C<client> defines the specification of the API.
+C<client> In C<Spica> is a power that defines the structure of each data, not URI.
+
+    client {
+        .. client's settings ..
+    };
+
+=head2 name($client_name)
+
+C<name> defines the name of the C<client>. C<name> fields are required.
+
+    client {
+        name 'client_name';
+    };
+
+on fetch calling:
+
+    $spica->fetch('client_name', ...);
+
+=head2 endpoint
+
+C<endpoint> defines the path and requires param.
+C<endpoint> it is possible to define more than one against C<client> one.
+
+=over
+
+=item endpoint($endpoin_name, $path, \@requires)
+
+Make the request using the GET method as the initial value in this definition. If you want to specify the HTTP method, please refer to the matter.
+
+    client {
+        name 'client_name';
+        endpoint 'endpoint_name' => '/path/to' => [qw(id)];
+    };
+
+on fetch:
+    
+    $spica->fetch('client_name', 'endpoint_name', \%param);
+
+If you specify a string of C<default> to C<$endpoint_name>, you can omit the C<$endpoint_name> when you use the Spica->fetch.
+
+    client {
+        name 'client_name';
+        endpoint 'default' => '/path/to' => [qw(id)];
+    };
+
+on fetch:
+    
+    $spica->fetch('client_name', \%param);
+
+=item endpoint(\%settings)
+
+C<endpoint> defines the path and request method and requires param.
+
+    client {
+        name 'client_name';
+        endpoint 'default' => +{
+            method   => 'POST',
+            path     => '/path/to',
+            requires => [qw(id)],
+        };
+    };
+
+=back
+
+=head2 receiver
+
+Specify an Iterator class.
+C<Spica::Receiver::Iterator> Is used by default.
+
+    client {
+        ...
+        receiver 'Your::Iterator';
+    };
+
+=head2 row_class
+
+Specify an Row class.
+C<Spica::Receiver::Row::*> Is used by default.
+
+    client {
+        ...
+        row_class 'Your::Row::Example';
+    };
+
+=head2 hooks
+
+=over
+
+=item trigger($hook_point_name, \&code);
+
+=item filter($hook_point_name, \&code);
+
+=back
+
+=head1 SEE ALSO
+
+L<Spica>
+
+=cut
