@@ -122,3 +122,53 @@ sub AUTOLOAD {
 sub DESTROY { 1 };
 
 1;
+__END__
+
+=encoding utf-8
+
+=head1 NAME
+
+Spica::Receiver::Row
+
+=head1 SYNOPSIS
+
+    my $spica = Spica->new(host => 'example.com');
+
+    my $iterator = Spica->new(host => 'example.com')->fetch('/list', +{});
+
+    while (my $row = $iterator->next) {
+
+        say $row->column_name;
+        say $row->get('column_name');
+
+        say $row->get_column('column_name'); # not inflated data
+        my $data = $row->get_columns; # not inflated by HashRef
+    }
+
+=head1 DESCRIPTION
+
+=head1 METHODS
+
+=head2 Spica::Receiver::Row->new(%args)
+
+arguments be:
+
+=over
+
+=item data
+
+=item spica
+
+=item client
+
+=item client_name
+
+=back
+
+=head2 $row->get($column_name)
+
+=head2 $row->get_column($column_name)
+
+=head2 $row->get_columns
+
+=cut

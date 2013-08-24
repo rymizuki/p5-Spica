@@ -131,3 +131,77 @@ sub _build_uri {
 }
 
 1;
+__END__
+
+=encoding utf-8
+
+=head1 NAME
+
+Spica::URIMaker
+
+=head1 SYNOPSIS
+
+    my $builder = Spica::URIMaker->new(
+        scheme => 'http',
+        host   => 'example.com',
+    );
+
+    $builder->create(
+        path_base => '/user/{user_id}',
+        requires  => [qw(user_id)],
+        param     => +{user_id => 1},
+    );
+
+    $builder->as_string; # http://example.com/user/1
+
+=head1 DESCRIPTION
+
+=head1 METHODS
+
+=head2 Spica::URIMaker->new(%args)
+
+arguments be:
+
+=over
+
+=item scheme
+
+=item host
+
+=item port
+
+=back
+
+=head2 $maker->create(%args)
+
+arguments be:
+
+=over
+
+=item path_base
+
+=item requires
+
+=item param
+
+=back
+
+=head2 $maker->create_path($path_base, \%param)
+
+=head2 $maker->create_query
+
+=head2 $maker->is_invalid_param(\%param, \@requires)
+
+=head2 $maker->new_uri
+
+=head2 $maker->param
+
+=head2 $maker->path
+
+=head2 $maker->content
+
+=head2 $maker->uri
+
+=head2 $maker->as_string
+
+=cut

@@ -105,3 +105,52 @@ sub all {
 }
 
 1;
+__END__
+
+=encoding utf-8
+
+=head1 NAME
+
+Spica::Receiver::Iterator
+
+=head1 SYNOPSIS
+
+    my $spica = Spica->new(host => 'example.com');
+
+    my $iterator = Spica->new(host => 'example.com')->fetch('/list', +{});
+
+    while (my $row = $iterator->next) {
+        ...
+    }
+
+=head1 DESCRIPTION
+
+=head1 METHODS
+
+=head2 Spica::Receiver::Iterator->new(%args)
+
+arguments be:
+
+=over
+
+=item data
+
+=item spica
+
+=item row_class
+
+=item client
+
+=item client_name
+
+=item suppress_object_creation
+
+=back
+
+=head2 $iterator->next
+
+=head2 $iterator->all
+
+=head2 $iterator->suppress_object_creation
+
+=cut
