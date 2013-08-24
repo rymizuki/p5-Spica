@@ -233,9 +233,11 @@ Arguments can be:
 - `path` : Str
 - `param` : HashRef
 
-# AUTHORS
+# SEE ALSO
 
-Ryo Iinuma `<ry.mizuki __at__ gmail.com>`
+# AUTHOR
+
+mizuki\_r <ry.mizuki@gmail.com>
 
 # REPOSITORY
 

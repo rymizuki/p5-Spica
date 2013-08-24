@@ -507,9 +507,11 @@ Arguments can be:
 
 =back
 
-=head1 AUTHORS
+=head1 SEE ALSO
 
-Ryo Iinuma C<< <ry.mizuki __at__ gmail.com> >>
+=head1 AUTHOR
+
+mizuki_r E<lt>ry.mizuki@gmail.comE<gt>
 
 =head1 REPOSITORY
 

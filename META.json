@@ -1,7 +1,7 @@
 {
    "abstract" : "the HTTP client for dealing with complex WEB API.",
    "author" : [
-      "Ryo Iinuma C<< <ry.mizuki __at__ gmail.com> >>"
+      "mizuki_r <ry.mizuki@gmail.com>"
    ],
    "dynamic_config" : 0,
    "generated_by" : "Minilla/v0.6.0, CPAN::Meta::Converter version 2.120921",
@@ -76,8 +76,5 @@
          "web" : "https://github.com/rymizuki/p5-Spica"
       }
    },
-   "version" : "0.01",
-   "x_contributors" : [
-      "mizuki_r <ry.mizuki@gmail.com>"
-   ]
+   "version" : "0.01"
 }
