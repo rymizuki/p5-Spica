@@ -63,8 +63,13 @@ has is_suppress_object_creation => (
     isa     => 'Bool',
     default => 0,
 );
+has is_suppress_query_creation => (
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
+);
 has spec => (
-    is        => 'ro',
+    is        => 'rw',
     isa       => SpecClass,
     coerce    => 1,
     predicate => 'has_spec',
@@ -126,7 +131,7 @@ sub fetch {
         $builder = $client->call_filter('init_builder' => ($self, $builder));
     }
 
-    if ($method eq 'GET' || $method eq 'HEAD' || $method eq 'DELETE') {
+    if (!$self->is_suppress_query_creation && ($method eq 'GET' || $method eq 'HEAD' || $method eq 'DELETE')) {
         # `content` is not available, I will grant `path_query`.
         # make `path_query` and delete `content` params.
         $builder->create_query;
