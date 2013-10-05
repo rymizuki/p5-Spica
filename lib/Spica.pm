@@ -179,12 +179,16 @@ sub execute_request {
         $builder = $client->call_filter('before_request' => ($self, $builder));
     }
 
-    my $response = $self->fetcher->request(
+    return $self->fetcher->request(
         method  => $method,
         url     => $builder->as_string,
         content => $builder->content || $builder->param,
         headers => $self->default_headers, # TODO: custom any header use.
     );
+}
+
+sub execute_parsing {
+    my ($self, $client, $response) = @_;
 
     {
         # hookpoint:
@@ -199,11 +203,6 @@ sub execute_request {
         Carp::croak("Invalid response. code is '@{[$response->status]}'");
     }
 
-    return $response;
-}
-
-sub execute_parsing {
-    my ($self, $client, $response) = @_;
     return $self->parser->parse($response->content);
 }
 
