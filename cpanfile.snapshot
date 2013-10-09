@@ -4,6 +4,8 @@ DISTRIBUTIONS
     pathname: S/SA/SARTAK/Any-Moose-0.21.tar.gz
     provides:
       Any::Moose 0.21
+      AnyMooseTest undef
+      inc::MakeMaker undef
     requirements:
       ExtUtils::MakeMaker 6.30
       Mouse 0.40
@@ -38,7 +40,16 @@ DISTRIBUTIONS
     pathname: D/DR/DROLSKY/Class-Load-0.20.tar.gz
     provides:
       Class::Load 0.20
+      Class::Load::Error::DieAfterBeginIsa undef
+      Class::Load::Error::DieAfterIsa undef
+      Class::Load::Error::SyntaxErrorAfterIsa undef
+      Class::Load::OK undef
       Class::Load::PP 0.20
+      Class::Load::Stash undef
+      Class::Load::Stash::Sub undef
+      Class::Load::SyntaxError undef
+      Class::Load::VersionCheck 42
+      Class::Load::VersionCheck2 42
     requirements:
       Carp 0
       Data::OptList 0
@@ -57,10 +68,10 @@ DISTRIBUTIONS
       strict 0
       version 0
       warnings 0
-  Clone-0.34
-    pathname: G/GA/GARU/Clone-0.34.tar.gz
+  Clone-0.35
+    pathname: G/GA/GARU/Clone-0.35.tar.gz
     provides:
-      Clone 0.34
+      Clone 0.35
     requirements:
       ExtUtils::MakeMaker 0
       Test::More 0
@@ -75,12 +86,6 @@ DISTRIBUTIONS
       Sub::Install 0.921
       strict 0
       warnings 0
-  Data-Section-Simple-0.05
-    pathname: M/MI/MIYAGAWA/Data-Section-Simple-0.05.tar.gz
-    provides:
-      Data::Section::Simple 0.05
-    requirements:
-      ExtUtils::MakeMaker 6.30
   Data-Validator-1.03
     pathname: G/GF/GFUJI/Data-Validator-1.03.tar.gz
     provides:
@@ -127,7 +132,45 @@ DISTRIBUTIONS
   Dist-CheckConflicts-0.09
     pathname: D/DO/DOY/Dist-CheckConflicts-0.09.tar.gz
     provides:
+      Bar 0.02
+      Bar::Bar 0.01
+      Bar::Bar::Bad 0.01
+      Bar::Bar::Good 0.02
+      Bar::Baz 0.02
+      Bar::Baz::Bad 0.01
+      Bar::Baz::Good 0.02
+      Bar::Conflicts undef
+      Bar::Conflicts2 undef
+      Bar::Conflicts3 undef
+      Bar::Conflicts::Bad undef
+      Bar::Conflicts::Bad2 undef
+      Bar::Conflicts::Bad3 undef
+      Bar::Conflicts::Good undef
+      Bar::Conflicts::Good2 undef
+      Bar::Conflicts::Good3 undef
+      Bar::Foo 0.01
+      Bar::Foo::Bad 0.01
+      Bar::Foo::Good 0.02
+      Bar::Quux 0.02
+      Bar::Quux::Bad 0.01
+      Bar::Quux::Good 0.02
+      Bar::Three 0.02
+      Bar::Two 0.02
+      Broken undef
       Dist::CheckConflicts 0.09
+      Foo undef
+      Foo::Bar 0.01
+      Foo::Baz 0.02
+      Foo::Conflicts undef
+      Foo::Conflicts2 undef
+      Foo::Conflicts::Bad undef
+      Foo::Conflicts::Broken undef
+      Foo::Conflicts::Good undef
+      Foo::Foo 0.01
+      Foo::Quux 0.02
+      Foo::Thing 0.02
+      Foo::Three 0.02
+      Foo::Two 0.02
     requirements:
       Carp 0
       Exporter 0
@@ -150,6 +193,7 @@ DISTRIBUTIONS
   Exporter-Lite-0.02
     pathname: M/MS/MSCHWERN/Exporter-Lite-0.02.tar.gz
     provides:
+      Dummy 0.5
       Exporter::Lite 0.02
     requirements:
       ExtUtils::MakeMaker 0
@@ -158,11 +202,11 @@ DISTRIBUTIONS
     pathname: G/GA/GAAS/File-Listing-6.04.tar.gz
     provides:
       File::Listing 6.04
-      File::Listing::apache undef
-      File::Listing::dosftp undef
-      File::Listing::netware undef
-      File::Listing::unix undef
-      File::Listing::vms undef
+      File::Listing::apache 6.04
+      File::Listing::dosftp 6.04
+      File::Listing::netware 6.04
+      File::Listing::unix 6.04
+      File::Listing::vms 6.04
     requirements:
       ExtUtils::MakeMaker 0
       HTTP::Date 6
@@ -178,10 +222,10 @@ DISTRIBUTIONS
       File::Spec 0.80
       Test::More 0.47
       perl 5.005
-  File-ShareDir-Install-0.04
-    pathname: G/GW/GWYN/File-ShareDir-Install-0.04.tar.gz
+  File-ShareDir-Install-0.05
+    pathname: G/GW/GWYN/File-ShareDir-Install-0.05.tar.gz
     provides:
-      File::ShareDir::Install 0.04
+      File::ShareDir::Install 0.05
     requirements:
       ExtUtils::MakeMaker 6.11
       File::Spec 0
@@ -192,12 +236,12 @@ DISTRIBUTIONS
       Filesys::Notify::Simple 0.12
     requirements:
       ExtUtils::MakeMaker 6.30
-  Furl-2.17
-    pathname: T/TO/TOKUHIROM/Furl-2.17.tar.gz
+  Furl-2.19
+    pathname: T/TO/TOKUHIROM/Furl-2.19.tar.gz
     provides:
-      Furl 2.17
+      Furl 2.19
       Furl::ConnectionCache undef
-      Furl::HTTP 2.17
+      Furl::HTTP 2.19
       Furl::Headers undef
       Furl::Request undef
       Furl::Response undef
@@ -207,6 +251,7 @@ DISTRIBUTIONS
       CPAN::Meta::Prereqs 0
       Class::Accessor::Lite 0
       Encode 0
+      ExtUtils::CBuilder 0
       HTTP::Parser::XS 0.11
       MIME::Base64 0
       Module::Build 0.38
@@ -245,6 +290,7 @@ DISTRIBUTIONS
       HTTP::Body::UrlEncoded 1.17
       HTTP::Body::XForms 1.17
       HTTP::Body::XFormsMultipart 1.17
+      PAML undef
     requirements:
       Carp 0
       Digest::MD5 0
@@ -270,7 +316,7 @@ DISTRIBUTIONS
     pathname: G/GA/GAAS/HTTP-Daemon-6.01.tar.gz
     provides:
       HTTP::Daemon 6.01
-      HTTP::Daemon::ClientConn undef
+      HTTP::Daemon::ClientConn 6.01
     requirements:
       ExtUtils::MakeMaker 0
       HTTP::Date 6
@@ -337,6 +383,19 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 6.42
       Test::More 0.96
+  HTTP-Tiny-0.036
+    pathname: D/DA/DAGOLDEN/HTTP-Tiny-0.036.tar.gz
+    provides:
+      HTTP::Tiny 0.036
+    requirements:
+      Carp 0
+      ExtUtils::MakeMaker 6.17
+      IO::Socket 0
+      MIME::Base64 0
+      Time::Local 0
+      bytes 0
+      strict 0
+      warnings 0
   Hash-MultiValue-0.15
     pathname: M/MI/MIYAGAWA/Hash-MultiValue-0.15.tar.gz
     provides:
@@ -359,11 +418,9 @@ DISTRIBUTIONS
     pathname: M/MA/MAKAMAKA/JSON-2.59.tar.gz
     provides:
       JSON 2.59
-      JSON::Backend::PP undef
-      JSON::Boolean undef
-      JSON::PP5005 1.10
-      JSON::PP56 1.08
-      JSON::backportPP::Boolean 1.01
+      JSON::Backend::PP 2.59
+      JSON::Boolean 2.59
+      JSON::backportPP::Boolean 2.27202
     requirements:
       ExtUtils::MakeMaker 0
       Test::More 0
@@ -387,6 +444,10 @@ DISTRIBUTIONS
     pathname: D/DR/DROLSKY/Module-Implementation-0.07.tar.gz
     provides:
       Module::Implementation 0.07
+      T::Impl1 undef
+      T::Impl2 undef
+      T::ImplFails1 undef
+      T::ImplFails2 undef
     requirements:
       Carp 0
       ExtUtils::MakeMaker 6.30
@@ -404,10 +465,10 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
-  Mouse-1.11
-    pathname: G/GF/GFUJI/Mouse-1.11.tar.gz
+  Mouse-1.12
+    pathname: G/GF/GFUJI/Mouse-1.12.tar.gz
     provides:
-      Mouse 1.11
+      Mouse 1.12
       Mouse::Exporter undef
       Mouse::Meta::Attribute undef
       Mouse::Meta::Class undef
@@ -425,12 +486,12 @@ DISTRIBUTIONS
       Mouse::Meta::TypeConstraint undef
       Mouse::Object undef
       Mouse::PurePerl undef
-      Mouse::Role 1.11
-      Mouse::Spec 1.11
-      Mouse::Tiny 1.11
+      Mouse::Role 1.12
+      Mouse::Spec 1.12
+      Mouse::Tiny 1.12
       Mouse::TypeRegistry undef
-      Mouse::Util 1.11
-      Mouse::Util::MetaRole undef
+      Mouse::Util undef
+      Mouse::Util::MetaRole 1.12
       Mouse::Util::TypeConstraints undef
       Squirrel undef
       Squirrel::Role undef
@@ -448,7 +509,7 @@ DISTRIBUTIONS
     pathname: G/GF/GFUJI/MouseX-Types-0.06.tar.gz
     provides:
       MouseX::Types 0.06
-      MouseX::Types::Base undef
+      MouseX::Types::Base 0.06
       MouseX::Types::Moose undef
       MouseX::Types::Mouse undef
       MouseX::Types::TypeDecorator undef
@@ -482,17 +543,19 @@ DISTRIBUTIONS
       IO::Select 0
       IO::Socket::INET 0
       perl 5.006002
-  Package-Stash-0.35
-    pathname: D/DO/DOY/Package-Stash-0.35.tar.gz
+  Package-Stash-0.36
+    pathname: D/DO/DOY/Package-Stash-0.36.tar.gz
     provides:
-      Package::Stash 0.35
-      Package::Stash::PP 0.35
+      Package::Stash 0.36
+      Package::Stash::PP 0.36
     requirements:
       B 0
       Carp 0
+      Config 0
       Dist::CheckConflicts 0.02
       ExtUtils::MakeMaker 6.30
       File::Find 0
+      File::Spec 0
       File::Temp 0
       Getopt::Long 0
       Module::Implementation 0.06
@@ -502,13 +565,16 @@ DISTRIBUTIONS
       Test::Fatal 0
       Test::More 0.88
       Test::Requires 0
+      Text::ParseWords 0
       base 0
       constant 0
+      lib 0
       strict 0
       warnings 0
   Package-Stash-XS-0.28
     pathname: D/DO/DOY/Package-Stash-XS-0.28.tar.gz
     provides:
+      CompileTime undef
       Package::Stash::XS 0.28
     requirements:
       ExtUtils::MakeMaker 6.30
@@ -526,12 +592,12 @@ DISTRIBUTIONS
       Scalar::Util 1.18
       Test::More 0.42
       perl 5.00503
-  Plack-1.0028
-    pathname: M/MI/MIYAGAWA/Plack-1.0028.tar.gz
+  Plack-1.0029
+    pathname: M/MI/MIYAGAWA/Plack-1.0029.tar.gz
     provides:
       HTTP::Message::PSGI undef
       HTTP::Server::PSGI undef
-      Plack 1.0028
+      Plack 1.0029
       Plack::App::CGIBin undef
       Plack::App::Cascade undef
       Plack::App::Directory undef
@@ -551,8 +617,6 @@ DISTRIBUTIONS
       Plack::Handler::CGI::Writer undef
       Plack::Handler::FCGI undef
       Plack::Handler::HTTP::Server::PSGI undef
-      Plack::Handler::HTTP::Server::Simple undef
-      Plack::Handler::HTTP::Server::Simple::PSGIServer undef
       Plack::Handler::Standalone undef
       Plack::LWPish undef
       Plack::Loader undef
@@ -592,9 +656,9 @@ DISTRIBUTIONS
       Plack::Middleware::XFramework undef
       Plack::Middleware::XSendfile undef
       Plack::Recursive::ForwardRequest undef
-      Plack::Request 1.0028
+      Plack::Request 1.0029
       Plack::Request::Upload undef
-      Plack::Response 1.0028
+      Plack::Response 1.0029
       Plack::Runner undef
       Plack::TempBuffer undef
       Plack::Test undef
@@ -615,11 +679,11 @@ DISTRIBUTIONS
       Filesys::Notify::Simple 0
       HTTP::Body 1.06
       HTTP::Message 5.814
-      HTTP::Tiny 0.024
+      HTTP::Tiny 0.034
       Hash::MultiValue 0.05
       Pod::Usage 1.36
       Stream::Buffered 0.02
-      Test::TCP 1.02
+      Test::TCP 2.00
       Try::Tiny 0
       URI 1.59
       parent 0
@@ -743,19 +807,16 @@ DISTRIBUTIONS
       Time::HiRes 0
       URI 0
       perl 5.008001
-  Test-Fatal-0.010
-    pathname: R/RJ/RJBS/Test-Fatal-0.010.tar.gz
+  Test-Fatal-0.013
+    pathname: R/RJ/RJBS/Test-Fatal-0.013.tar.gz
     provides:
-      Test::Fatal 0.010
+      Test::Fatal 0.013
     requirements:
       Carp 0
       Exporter 5.57
       ExtUtils::MakeMaker 6.30
       Test::Builder 0
-      Test::Builder::Tester 0
-      Test::More 0.47
       Try::Tiny 0.07
-      overload 0
       strict 0
       warnings 0
   Test-NoWarnings-1.04
@@ -795,11 +856,11 @@ DISTRIBUTIONS
       Test::Requires 0
       Time::HiRes 0
       perl 5.008
-  Test-TCP-2.00
-    pathname: T/TO/TOKUHIROM/Test-TCP-2.00.tar.gz
+  Test-TCP-2.01
+    pathname: T/TO/TOKUHIROM/Test-TCP-2.01.tar.gz
     provides:
       Net::EmptyPort undef
-      Test::TCP 2.00
+      Test::TCP 2.01
       Test::TCP::CheckPort undef
     requirements:
       CPAN::Meta 0
@@ -830,10 +891,10 @@ DISTRIBUTIONS
       ExtUtils::Manifest 0
       Test::Builder 0.30
       Test::More 0.60
-  Try-Tiny-0.16
-    pathname: D/DO/DOY/Try-Tiny-0.16.tar.gz
+  Try-Tiny-0.18
+    pathname: D/DO/DOY/Try-Tiny-0.18.tar.gz
     provides:
-      Try::Tiny 0.16
+      Try::Tiny 0.18
     requirements:
       Carp 0
       Exporter 0
@@ -853,6 +914,16 @@ DISTRIBUTIONS
       URI::Split undef
       URI::URL 5.04
       URI::WithBase 2.20
+      URI::_foreign undef
+      URI::_generic undef
+      URI::_idna undef
+      URI::_ldap 1.12
+      URI::_login undef
+      URI::_punycode 0.04
+      URI::_query undef
+      URI::_segment undef
+      URI::_server undef
+      URI::_userpass undef
       URI::data undef
       URI::file 4.21
       URI::file::Base undef
@@ -898,7 +969,7 @@ DISTRIBUTIONS
     provides:
       WWW::RobotRules 6.02
       WWW::RobotRules::AnyDBM_File 6.00
-      WWW::RobotRules::InCore undef
+      WWW::RobotRules::InCore 6.02
     requirements:
       AnyDBM_File 0
       ExtUtils::MakeMaker 0
@@ -967,6 +1038,7 @@ DISTRIBUTIONS
   XML-Simple-2.20
     pathname: G/GR/GRANTM/XML-Simple-2.20.tar.gz
     provides:
+      TagsToUpper undef
       XML::Simple 2.20
     requirements:
       ExtUtils::MakeMaker 6.31
