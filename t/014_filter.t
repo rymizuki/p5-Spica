@@ -17,7 +17,7 @@ use Spica;
         );
         filter 'before_request' => sub {
             my ($spica, $builder) = @_;
-            # XXX: pathの書き換え SEE ALSO Spica::URIMaker
+            # XXX: override uri path SEE ALSO Spica::URIMaker
             $builder->uri->path('/test');
             return $builder;
         };
