@@ -75,10 +75,17 @@ sub _generate_filter_init_builder {
 
     return sub {
         my ($spica, $builder) = @_;
-        my %param =  map { $_->{origin} => $builder->param->{$_->{name}} }
-                    grep { exists $builder->param->{$_->{name}} }
-                    @attributes;
+
+        my @attrs = @attributes;
+
+        my %param = %{ $builder->param };
+        for my $attr (@attrs) {
+            next unless exists $param{$attr->{name}};
+            $param{$attr->{origin}} = delete $param{$attr->{name}};
+        }
+
         $builder->param(\%param);
+
         return $builder;
     };
 }
