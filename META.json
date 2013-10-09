@@ -4,7 +4,7 @@
       "mizuki_r <ry.mizuki@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v0.6.0, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Minilla/v0.7.5, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -21,7 +21,8 @@
          "share",
          "eg",
          "examples",
-         "author"
+         "author",
+         "builder"
       ]
    },
    "prereqs" : {
