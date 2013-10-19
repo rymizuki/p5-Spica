@@ -127,7 +127,7 @@ sub fetch {
         # hookpoint:
         #   name: `init_builder`
         #   args: ($client isa 'Spica::Client', $builder isa `Spica::URIMaker`)
-        $client->call_trigger('init_builder' => ($self, $builder));
+        $client->call_trigger('init_builder' => $builder);
         $builder = $client->call_filter('init_builder' => ($self, $builder));
     }
 
@@ -175,7 +175,7 @@ sub execute_request {
         # hookpoint:
         #   name: `before_request`
         #   args: ($client isa 'Spica::Client', $builder isa `Spica::URIMaker`)
-        $client->call_trigger('before_request' => ($self, $builder));
+        $client->call_trigger('before_request' => $builder);
         $builder = $client->call_filter('before_request' => ($self, $builder));
     }
 
@@ -194,7 +194,7 @@ sub execute_parsing {
         # hookpoint:
         #   name: `after_request`
         #   args: ($client isa 'Spica::Client', $response isa `Furl::Response`)
-        $client->call_trigger('after_request' => ($self, $response));
+        $client->call_trigger('after_request' => $response);
         $response = $client->call_filter('after_request' => ($self, $response));
     }
 
@@ -216,7 +216,7 @@ sub execute_receive {
             # hookpoint:
             #   name: `before_receive`.
             #   args: ($client isa 'Spica::Client', $data isa 'ArrayRef|HashRef')
-            $client->call_trigger('before_receive' => ($self, $data));
+            $client->call_trigger('before_receive' => $data);
             $data = $client->call_filter('before_receive' => ($self, $data));
         }
 
