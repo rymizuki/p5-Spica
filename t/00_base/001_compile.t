@@ -2,6 +2,7 @@ use Test::More;
 
 use_ok $_ for qw(
     Spica
+    Spica::Event
     Spica::Client
     Spica::Filter
     Spica::Parser

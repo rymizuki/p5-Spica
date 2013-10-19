@@ -16,6 +16,8 @@ use Furl;
 
 use Mouse;
 
+with 'Spica::Event';
+
 # -------------------------------------------------------------------------
 # fetcher's args
 # -------------------------------------------------------------------------
@@ -116,32 +118,35 @@ sub fetch {
         or Carp::croak("No such enpoint ${endpoint_name}.");
     my $method = $endpoint->{method};
 
-    # init uri builder
-    my $builder = $self->uri_builder->new_uri->create(
-        path_base => $endpoint->{path},
-        requires  => $endpoint->{requires}, 
-        param     => +{ $self->default_param => %$param },
-    );
+    $self->trigger('init', ($client, $endpoint));
 
-    {
-        # hookpoint:
-        #   name: `init_builder`
-        #   args: ($client isa 'Spica::Client', $builder isa `Spica::URIMaker`)
-        $client->call_trigger('init_builder' => $builder);
+    # build_uri
+    my $builder = sub {
+        my $builder = $self->uri_builder->new_uri->create(
+            path_base => $endpoint->{path},
+            requires  => $endpoint->{requires}, 
+            param     => +{ $self->default_param => %$param },
+        );
+
         $builder = $client->call_filter('init_builder' => ($self, $builder));
-    }
 
-    if (!$self->is_suppress_query_creation && ($method eq 'GET' || $method eq 'HEAD' || $method eq 'DELETE')) {
-        # `content` is not available, I will grant `path_query`.
-        # make `path_query` and delete `content` params.
-        $builder->create_query;
-    }
+        if (!$self->is_suppress_query_creation && ($method eq 'GET' || $method eq 'HEAD' || $method eq 'DELETE')) {
+            # `content` is not available, I will grant `path_query`.
+            # make `path_query` and delete `content` params.
+            $builder->create_query;
+        }
+
+        return $builder;
+    }->();
+    $self->trigger('uri_build', $builder);
 
     # execute request
     my $response = $self->execute_request($client, $method, $builder);
+    $self->trigger('request', $response);
 
     # execute parseing
     my $data = $self->execute_parsing($client, $response);
+    $self->trigger('parse', $data);
 
     # execute receive
     return $self->execute_receive($client, $data);
