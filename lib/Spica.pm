@@ -128,7 +128,10 @@ sub fetch {
             param     => +{ $self->default_param => %$param },
         );
 
-        $builder = $client->call_filter('init_builder' => ($self, $builder));
+        {
+            my @codes = $client->get_filter_code('init_builder');
+            $builder = $_->($client, $builder) for @codes;
+        }
 
         if (!$self->is_suppress_query_creation && ($method eq 'GET' || $method eq 'HEAD' || $method eq 'DELETE')) {
             # `content` is not available, I will grant `path_query`.
@@ -181,7 +184,9 @@ sub execute_request {
         #   name: `before_request`
         #   args: ($client isa 'Spica::Client', $builder isa `Spica::URIMaker`)
         $client->call_trigger('before_request' => $builder);
-        $builder = $client->call_filter('before_request' => ($self, $builder));
+
+        my @codes = $client->get_filter_code('before_request');
+        $builder = $_->($client, $builder) for @codes;
     }
 
     return $self->fetcher->request(
@@ -200,7 +205,9 @@ sub execute_parsing {
         #   name: `after_request`
         #   args: ($client isa 'Spica::Client', $response isa `Furl::Response`)
         $client->call_trigger('after_request' => $response);
-        $response = $client->call_filter('after_request' => ($self, $response));
+
+        my @codes = $client->get_filter_code('after_request');
+        $response = $_->($client, $response) for @codes;
     }
 
     if (!$response->is_success && !$self->no_throw_http_exception) {
@@ -222,7 +229,9 @@ sub execute_receive {
             #   name: `before_receive`.
             #   args: ($client isa 'Spica::Client', $data isa 'ArrayRef|HashRef')
             $client->call_trigger('before_receive' => $data);
-            $data = $client->call_filter('before_receive' => ($self, $data));
+
+            my @codes = $client->get_filter_code('before_receive');
+            $data = $_->($client, $data) for @codes;
         }
 
         my $iterator = $client->receiver->new(
