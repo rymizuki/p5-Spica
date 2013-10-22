@@ -16,6 +16,8 @@ use Furl;
 
 use Mouse;
 
+with 'Spica::Event';
+
 # -------------------------------------------------------------------------
 # fetcher's args
 # -------------------------------------------------------------------------
@@ -116,32 +118,38 @@ sub fetch {
         or Carp::croak("No such enpoint ${endpoint_name}.");
     my $method = $endpoint->{method};
 
-    # init uri builder
-    my $builder = $self->uri_builder->new_uri->create(
-        path_base => $endpoint->{path},
-        requires  => $endpoint->{requires}, 
-        param     => +{ $self->default_param => %$param },
-    );
+    $self->trigger('init', ($client, $endpoint));
 
-    {
-        # hookpoint:
-        #   name: `init_builder`
-        #   args: ($client isa 'Spica::Client', $builder isa `Spica::URIMaker`)
-        $client->call_trigger('init_builder' => $builder);
-        $builder = $client->call_filter('init_builder' => ($self, $builder));
-    }
+    # build_uri
+    my $builder = sub {
+        my $builder = $self->uri_builder->new_uri->create(
+            path_base => $endpoint->{path},
+            requires  => $endpoint->{requires}, 
+            param     => +{ $self->default_param => %$param },
+        );
 
-    if (!$self->is_suppress_query_creation && ($method eq 'GET' || $method eq 'HEAD' || $method eq 'DELETE')) {
-        # `content` is not available, I will grant `path_query`.
-        # make `path_query` and delete `content` params.
-        $builder->create_query;
-    }
+        {
+            my @codes = $client->get_filter_code('init_builder');
+            $builder = $_->($client, $builder) for @codes;
+        }
+
+        if (!$self->is_suppress_query_creation && ($method eq 'GET' || $method eq 'HEAD' || $method eq 'DELETE')) {
+            # `content` is not available, I will grant `path_query`.
+            # make `path_query` and delete `content` params.
+            $builder->create_query;
+        }
+
+        return $builder;
+    }->();
+    $self->trigger('uri_build', $builder);
 
     # execute request
     my $response = $self->execute_request($client, $method, $builder);
+    $self->trigger('request', $response);
 
     # execute parseing
     my $data = $self->execute_parsing($client, $response);
+    $self->trigger('parse', $data);
 
     # execute receive
     return $self->execute_receive($client, $data);
@@ -171,12 +179,14 @@ sub get_client {
 sub execute_request {
     my ($self, $client, $method, $builder) = @_;
 
-    {
+    { # XXX: deprecated block
         # hookpoint:
         #   name: `before_request`
         #   args: ($client isa 'Spica::Client', $builder isa `Spica::URIMaker`)
         $client->call_trigger('before_request' => $builder);
-        $builder = $client->call_filter('before_request' => ($self, $builder));
+
+        my @codes = $client->get_filter_code('before_request');
+        $builder = $_->($client, $builder) for @codes;
     }
 
     return $self->fetcher->request(
@@ -190,12 +200,14 @@ sub execute_request {
 sub execute_parsing {
     my ($self, $client, $response) = @_;
 
-    {
+    { # XXX: deprecated block
         # hookpoint:
         #   name: `after_request`
         #   args: ($client isa 'Spica::Client', $response isa `Furl::Response`)
         $client->call_trigger('after_request' => $response);
-        $response = $client->call_filter('after_request' => ($self, $response));
+
+        my @codes = $client->get_filter_code('after_request');
+        $response = $_->($client, $response) for @codes;
     }
 
     if (!$response->is_success && !$self->no_throw_http_exception) {
@@ -212,12 +224,14 @@ sub execute_receive {
     if ($self->is_suppress_object_creation) {
         return $data;
     } else {
-        {
+        { # XXX: deprecated block
             # hookpoint:
             #   name: `before_receive`.
             #   args: ($client isa 'Spica::Client', $data isa 'ArrayRef|HashRef')
             $client->call_trigger('before_receive' => $data);
-            $data = $client->call_filter('before_receive' => ($self, $data));
+
+            my @codes = $client->get_filter_code('before_receive');
+            $data = $_->($client, $data) for @codes;
         }
 
         my $iterator = $client->receiver->new(

@@ -20,13 +20,21 @@ subtest 'basic' => sub {
         spica       => $spica,
         client      => $client,
         client_name => $client->name,
-        row_data    => +{
+        data        => +{
             id => 1, name => 'perl',
         },
     );
     
     isa_ok $row => 'Spica::Receiver::Row';
     can_ok $row => qw(id name);
+
+    is $row->id   => 1;
+    is $row->name => 'perl';
+
+    is_deeply $row->get_columns => +{
+        id   => 1,
+        name => 'perl',
+    };
 };
 
 done_testing;
