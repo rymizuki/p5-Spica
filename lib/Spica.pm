@@ -179,7 +179,7 @@ sub get_client {
 sub execute_request {
     my ($self, $client, $method, $builder) = @_;
 
-    {
+    { # XXX: deprecated block
         # hookpoint:
         #   name: `before_request`
         #   args: ($client isa 'Spica::Client', $builder isa `Spica::URIMaker`)
@@ -200,7 +200,7 @@ sub execute_request {
 sub execute_parsing {
     my ($self, $client, $response) = @_;
 
-    {
+    { # XXX: deprecated block
         # hookpoint:
         #   name: `after_request`
         #   args: ($client isa 'Spica::Client', $response isa `Furl::Response`)
@@ -224,7 +224,7 @@ sub execute_receive {
     if ($self->is_suppress_object_creation) {
         return $data;
     } else {
-        {
+        { # XXX: deprecated block
             # hookpoint:
             #   name: `before_receive`.
             #   args: ($client isa 'Spica::Client', $data isa 'ArrayRef|HashRef')
