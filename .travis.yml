@@ -4,4 +4,4 @@ perl:
   - 5.14
   - 5.16
 install: cpanm --installdeps --notest .
-script: perl Build.PL && ./Build test
+script: Build.PL && ./Build test
