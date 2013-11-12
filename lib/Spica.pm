@@ -189,12 +189,17 @@ sub execute_request {
         $builder = $_->($client, $builder) for @codes;
     }
 
-    return $self->fetcher->request(
+    my %param = (
         method  => $method,
         url     => $builder->as_string,
-        content => $builder->content || $builder->param,
         headers => $self->default_headers, # TODO: custom any header use.
     );
+
+    if ($method eq 'POST' || $method eq 'PUT' || $method eq 'DELETE') {
+        $param{content} = $builder->content || $builder->param;
+    }
+
+    return $self->fetcher->request(%param);
 }
 
 sub execute_parsing {
