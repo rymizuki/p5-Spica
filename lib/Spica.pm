@@ -2,7 +2,7 @@ package Spica;
 use strict;
 use warnings;
 use utf8;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Spica::Client;
 use Spica::Receiver::Iterator;

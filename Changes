@@ -2,6 +2,9 @@ Revision history for Perl extension Spica
 
 {{$NEXT}}
 
+0.04 2013-11-12T12:50:03Z
+    - fixed issues #20
+
 0.03 2013-10-22T11:43:53Z
 
     - to change the specifications of the trigger
